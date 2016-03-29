@@ -8,6 +8,9 @@ class View
     private $name;
     private $partial;
     private $path;
+    private $callArray = [];
+    private $callIndex = -1;
+    private $viewbag;
 
     /**
      * View constructor.
@@ -61,13 +64,20 @@ class View
 
     public function apply($viewbag)
     {
-        $viewbag['root'] = $this->applyRoot();
-        $this->layout("header", $viewbag, true);
-        if (is_file($this->name)) {
-            /** @noinspection PhpIncludeInspection */
-            require $this->name;
+        $this->viewbag = $viewbag;
+        $this->viewbag['root'] = $this->applyRoot();
+
+        if (!$this->partial) {
+            $this->callArray = $this->layout();
+            $this->callArray[] = $this->name;
+            $this->callIndex = -1;
+            $this->continueRun();
+        } else {
+            if (is_file($this->name)) {
+                /** @noinspection PhpIncludeInspection */
+                require $this->name;
+            }
         }
-        $this->layout("footer", $viewbag, false);
 
     }
 
@@ -83,32 +93,34 @@ class View
         return $root;
     }
 
-    /**
-     * @param string $layoutName
-     * @param array $viewbag
-     * @param bool $inverted
-     * @param null $path
-     */
-    private function layout($layoutName, $viewbag, $inverted = true, $path = null)
+    private function layout()
     {
-        if ($this->partial)
-            return;
-        if (!isset($viewbag)) die();
+        $arr = [];
+        $path = rtrim($this->path, "/") . "/";
 
-        if ($path == null)
-            $path = rtrim($this->path, "/") . "/";
+        do {
+            if (substr($path, -8) === "Classes/")
+                break;
+            $arr[] = $path;
+            $path = substr($path, 0, strrpos(substr($path, 0, -1), "/") + 1);
+        } while (true);
 
-        if (substr($path, -8) === "Classes/")
-            return;
-        if ($inverted)
-            $this->layout($layoutName, $viewbag, $inverted, substr($path, 0, strrpos(substr($path, 0, -1), "/") + 1));
+        return $arr;
+    }
 
-        if (is_dir($path . "layout")) {
+    private function continueRun()
+    {
+        $this->callIndex++;
+        $item = $this->callArray[$this->callIndex];
+        if ($this->callIndex != count($this->callArray) - 1)
+            $item .= "_layout.php";
+//        echo "<pre>";var_dump($item);echo "</pre>";
+        if (is_file($item)) {
+            /** @noinspection PhpUnusedLocalVariableInspection */
+            $viewbag = $this->viewbag;
             /** @noinspection PhpIncludeInspection */
-            require $path . "layout/{$layoutName}.php";
+            require $item;
         }
-
-        if (!$inverted)
-            $this->layout($layoutName, $viewbag, $inverted, substr($path, 0, strrpos(substr($path, 0, -1), "/") + 1));
+        $this->callIndex--;
     }
 }
