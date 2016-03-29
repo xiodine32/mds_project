@@ -4,6 +4,11 @@
  */
 if (!isset($viewbag)) die();
 ?>
-footer all
+</div>
+</div>
+<script src="<?= $viewbag['root'] ?>js/vendor/jquery.min.js"></script>
+<script src="<?= $viewbag['root'] ?>js/vendor/what-input.min.js"></script>
+<script src="<?= $viewbag['root'] ?>js/foundation.min.js"></script>
+<script src="<?= $viewbag['root'] ?>js/app.js"></script>
 </body>
 </html>

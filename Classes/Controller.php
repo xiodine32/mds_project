@@ -25,10 +25,6 @@ abstract class Controller
 
         $view->setImplicitViewName(get_called_class());
 
-        echo "<pre>";
-        var_dump($view);
-        echo "</pre>";
-
         $view->apply($this->viewbag);
 //        require $name;
     }

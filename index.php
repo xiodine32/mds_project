@@ -40,6 +40,9 @@ foreach ($pages as $key => $value) {
     $pages[$key] = ucfirst($value);
 }
 
+$GLOBALS['PAGE_ARR'] = $pages;
+$GLOBALS['PAGE_STR'] = $page;
+
 /**
  * @param $page string
  * @return string

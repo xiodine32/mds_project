@@ -61,6 +61,7 @@ class View
 
     public function apply($viewbag)
     {
+        $viewbag['root'] = $this->applyRoot();
         $this->layout("header", $viewbag, true);
         if (is_file($this->name)) {
             /** @noinspection PhpIncludeInspection */
@@ -68,6 +69,18 @@ class View
         }
         $this->layout("footer", $viewbag, false);
 
+    }
+
+    /**
+     * @return string
+     */
+    private function applyRoot()
+    {
+        $depth = 0;
+        str_replace("/", "", $GLOBALS['PAGE_STR'], $depth);
+        $root = './';
+        $root .= str_repeat("../", $depth);
+        return $root;
     }
 
     /**

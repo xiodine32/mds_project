@@ -17,6 +17,6 @@ class ControllerIndex extends \Controller
      */
     public function call($get, $post, $files)
     {
-        return new \View();
+        return new \View("../405");
     }
 }
