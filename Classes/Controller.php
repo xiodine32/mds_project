@@ -6,6 +6,33 @@
 
 abstract class Controller
 {
+    protected $viewbag;
+    /**
+     * Controller constructor.
+     */
+    public function __construct()
+    {
+        $this->viewbag = [];
+    }
+
+    public function run()
+    {
+        // curate
+        $_GET = $this->curate($_GET);
+        $_POST = $this->curate($_POST);
+        $_FILES = $this->curate($_FILES);
+        $view = $this->call($_GET, $_POST, $_FILES);
+
+        $view->setImplicitViewName(get_called_class());
+
+        echo "<pre>";
+        var_dump($view);
+        echo "</pre>";
+
+        $view->apply($this->viewbag);
+//        require $name;
+    }
+
     /**
      * @param $item mixed
      * @return mixed
@@ -23,13 +50,13 @@ abstract class Controller
         return $item;
     }
 
-    public function run()
-    {
-        // curate
-        $_GET = $this->curate($_GET);
-        $_POST = $this->curate($_POST);
-        $_FILES = $this->curate($_FILES);
-        $this->call($_GET, $_POST, $_FILES);
-    }
+    /**
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @return \View
+     */
     public abstract function call($get, $post, $files);
+
+
 }

@@ -8,6 +8,7 @@ error_reporting(E_ALL);
 
 $page = empty($_GET['page']) ? "index" : $_GET['page'];
 
+
 spl_autoload_register(function ($className) {
     $className = ltrim($className, '\\');
     $fileName  = '';
@@ -18,8 +19,15 @@ spl_autoload_register(function ($className) {
     }
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
     $fileName = __DIR__ . "/Classes/" . $fileName;
-    echo "<pre>";var_dump($fileName);echo "</pre>";
-    require $fileName;
+//    echo "<pre>";var_dump($fileName);echo "</pre>";
+    if (is_file($fileName)) {
+        /** @noinspection PhpIncludeInspection */
+        require $fileName;
+    } else {
+        require __DIR__ . "/Classes/Controllers/Controller404.php";
+        (new \Controllers\Controller404())->run();
+        die();
+    }
 });
 
 $pages = explode("/", $page);
@@ -28,7 +36,22 @@ $n = count($pages);
 if (empty($pages[$n - 1]))
     $pages[$n - 1] = "index";
 
-$pages[$n - 1] = "Controller" . ucfirst($pages[$n - 1]);
+foreach ($pages as $key => $value) {
+    $pages[$key] = ucfirst($value);
+}
+
+/**
+ * @param $page string
+ * @return string
+ */
+function clear($page)
+{
+    $max = strrpos($page, ".");
+    $page = substr($page, 0, $max !== false ? $max : strlen($page));
+    return $page;
+}
+
+$pages[$n - 1] = "Controller" . clear($pages[$n - 1]);
 
 $controller = "\\Controllers\\" . implode("\\", $pages);
 
