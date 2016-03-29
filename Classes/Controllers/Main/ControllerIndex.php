@@ -17,6 +17,7 @@ class ControllerIndex extends \Controller
      */
     public function call($get, $post, $files)
     {
+        $this->viewbag['title'] = 'Main Page';
         return new \View("../405");
     }
 }
