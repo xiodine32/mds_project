@@ -84,7 +84,7 @@ class View
     /**
      * @return string
      */
-    private function applyRoot()
+    protected function applyRoot()
     {
         $depth = 0;
         str_replace("/", "", $GLOBALS['PAGE_STR'], $depth);

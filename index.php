@@ -2,7 +2,7 @@
 /**
  * Created at: 29/03/16 12:30
  */
-
+session_start();
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
 
@@ -58,7 +58,12 @@ $pages[$n - 1] = "Controller" . clear($pages[$n - 1]);
 
 $controller = "\\Controllers\\" . implode("\\", $pages);
 
+//$user = new \Models\ModelUser("q");
+//$user->setPassword("q");
+//$user->databaseInsert();
+//$test = \Models\ModelUser::databaseSelect('`username` = ?', ['q']);
+//echo "<pre>";var_dump($test);echo "</pre>";
+
 /** @var Controller $c*/
 $c = new $controller();
-
 $c->run();

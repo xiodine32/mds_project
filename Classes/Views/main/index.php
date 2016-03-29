@@ -4,4 +4,3 @@
  */
 if (!isset($viewbag)) die();
 ?>
-index main

@@ -6,18 +6,11 @@
 namespace Controllers\Main;
 
 
-class ControllerIndex extends \Controller
+class ControllerIndex extends ControllerMain
 {
-
-    /**
-     * @param array $get
-     * @param array $post
-     * @param array $files
-     * @return \View
-     */
-    public function call($get, $post, $files)
+    protected function callLogged($get, $post, $files)
     {
         $this->viewbag['title'] = 'Main Page';
-        return new \View("../405");
+        return new \View();
     }
 }

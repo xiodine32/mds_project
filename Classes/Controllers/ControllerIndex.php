@@ -11,7 +11,6 @@ class ControllerIndex extends Controller {
 
     public function call($get, $post, $files)
     {
-        $this->viewbag["title"] = "Index";
-        return new \View();
+        return new \Redirect("login");
     }
 };
