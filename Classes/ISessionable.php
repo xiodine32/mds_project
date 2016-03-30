@@ -7,13 +7,19 @@ interface ISessionable
 {
     /**
      * Saves the model to session.
-     * @param IModel $item
+     * @param ISessionable $item
      */
     static function toSession($item);
 
     /**
      * Reads the model from session.
-     * @return false|IModel
+     * @return false|ISessionable
      */
     static function fromSession();
+
+    /**
+     * Removes the item from session.
+     * @param $item ISessionable
+     */
+    static function unsetSession($item);
 }

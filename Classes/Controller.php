@@ -54,5 +54,35 @@ abstract class Controller
      */
     public abstract function call($get, $post, $files);
 
+    protected function isEqualGetKey($key, $value)
+    {
+        return $this->isGetKey($key) && $_GET[$key] === $value;
+    }
+
+    protected function isGetKey($key)
+    {
+        return isset($_GET[$key]);
+    }
+
+    protected function isEqualPostKey($key, $value)
+    {
+        return $this->isPostKey($key) && $_POST[$key] === $value;
+    }
+
+    protected function isPostKey($key)
+    {
+        return isset($_POST[$key]);
+    }
+
+    protected function isEqualFilesKey($key, $value)
+    {
+        return $this->isFilesKey($key) && $_FILES[$key] === $value;
+    }
+
+    protected function isFilesKey($key)
+    {
+        return isset($_FILES[$key]);
+    }
+
 
 }

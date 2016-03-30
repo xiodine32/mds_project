@@ -4,3 +4,9 @@
  */
 if (!isset($viewbag)) die();
 ?>
+<a href="?logout=true">Logout</a>
+<div class="panel">
+    <?php echo "<pre>";
+    var_dump($viewbag['employee']);
+    echo "</pre>"; ?>
+</div>

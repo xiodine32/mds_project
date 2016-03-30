@@ -25,7 +25,7 @@ CREATE TABLE Employees (
   employeeID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   roleID          INT,
   account         VARCHAR(50)     NOT NULL UNIQUE,
-  password        VARCHAR(50)     NOT NULL,
+  password        VARCHAR(64)     NOT NULL,
   managerID       INT,
   departmentID    INT,
   firstName       VARCHAR(50)     NOT NULL,

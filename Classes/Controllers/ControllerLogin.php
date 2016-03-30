@@ -6,19 +6,21 @@
 namespace Controllers;
 
 use Controller;
-use Models\ModelUser;
+use Models\ModelEmployee;
 
 class ControllerLogin extends Controller
 {
 
     public function call($get, $post, $files)
     {
-        if (ModelUser::fromSession() !== false)
+        if (ModelEmployee::fromSession() !== false)
             return new \Redirect("/main/");
         $this->viewbag["title"] = "Login";
+
         if (!empty($post['username'])) {
             return $this->tryLogin($post['username'], $post['password']);
         }
+
         return new \View();
     }
 
@@ -34,8 +36,8 @@ class ControllerLogin extends Controller
             return new \View();
         }
 
-        /** @var \Models\ModelUser $user */
-        $user = ModelUser::databaseSelect('`username` = ?', [$username]);
+        /** @var \Models\ModelEmployee $user */
+        $user = ModelEmployee::databaseSelect('account = ?', [$username]);
 //        var_dump($user);
         if (!$user) {
             $this->viewbag['error'] = 'User not found';

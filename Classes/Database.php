@@ -9,7 +9,8 @@ class Database
     const FETCH_ONE = 1;
     const FETCH_ALL = 2;
     private $dbh;
-
+    /** @var Exception */
+    private $lastError;
     private function __construct()
     {
         $this->dbh = new \PDO("mysql:host=localhost;dbname=x28xioro_mds;charset=utf8", "x28xioro_mds", "MDS123$");
@@ -36,9 +37,8 @@ class Database
      */
     public function query($string, $array = [], $fetchType = Database::FETCH_NONE)
     {
+        $this->lastError = null;
         try {
-//        echo "<pre>";var_dump("query", $string, $array);echo "</pre>";
-
             $e = $this->dbh->prepare($string);
 
 
@@ -63,6 +63,7 @@ class Database
             }
             return false;
         } catch (Exception $e) {
+            $this->lastError = $e;
             return false;
         }
     }
@@ -75,6 +76,20 @@ class Database
     public function lastInsertId($name = null)
     {
         return $this->dbh->lastInsertId($name);
+    }
+
+    public function lastError()
+    {
+        $message = $this->lastError->getMessage();
+
+        $lastDots = strrpos($message, ":") + 1;
+
+        $error = substr($message, $lastDots);
+
+        $trimmedError = trim($error);
+
+
+        return $trimmedError;
     }
 
 }

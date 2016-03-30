@@ -6,10 +6,15 @@
 namespace Controllers\Main;
 
 
-use Models\ModelUser;
+use Models\ModelEmployee;
 
 abstract class ControllerMain extends \Controller
 {
+
+    /**
+     * @var ModelEmployee
+     */
+    protected $employee;
 
     /**
      * @param array $get
@@ -19,11 +24,15 @@ abstract class ControllerMain extends \Controller
      */
     public function call($get, $post, $files)
     {
-        $user = ModelUser::fromSession();
-        if ($user === false) {
+        $this->employee = ModelEmployee::fromSession();
+
+        if ($this->employee === false) {
             return new \Redirect("login");
         }
+
         $this->viewbag['title'] = 'Main Page';
+        $this->viewbag['employee'] = $this->employee;
+
         return $this->callLogged($get, $post, $files);
     }
 

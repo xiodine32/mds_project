@@ -6,7 +6,7 @@
 namespace Controllers;
 
 use Controller;
-use Models\ModelUser;
+use Models\ModelEmployee;
 
 class ControllerRegister extends Controller
 {
@@ -28,17 +28,21 @@ class ControllerRegister extends Controller
             return new \View();
         }
 
-        $user = new ModelUser($username);
+        $user = new ModelEmployee();
+        $user->setAccount($username);
         $user->setPassword($password);
 
         $databaseInsert = $user->databaseInsert();
         if ($databaseInsert) {
-            /** @var $user2 ModelUser */
-            $user2 = ModelUser::databaseSelect('`username` = ?', [$username]);
+            /** @var $user2 ModelEmployee */
+            $user2 = ModelEmployee::databaseSelect('account = ?', [$username]);
             if ($user2->tryLogin($password))
                 return new \Redirect("/main/");
+            $this->viewbag['error'] = 'Passwords must match, username must not be empty and the same for the password!';
+
             return new \View();
         }
+        $this->viewbag['error'] = 'Could not insert! <strong>' . print_r(\Database::instance()->lastError(), true) . "</strong>";
         return new \View();
     }
 }

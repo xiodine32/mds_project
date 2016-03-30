@@ -81,6 +81,10 @@ function run($fileName)
     <title>Migrations | RAT</title>
     <link rel="stylesheet" href="content/css/foundation.min.css"/>
     <link rel="stylesheet" href="content/css/app.css"/>
+    <style type="text/css">td, th {
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }</style>
 </head>
 <body>
 <div class="row">
@@ -108,7 +112,7 @@ function run($fileName)
             <?php run($_POST['run']); ?>
         <?php endif ?>
         <hr>
-        <h1>Describe</h1>
+        <h1>Tables</h1>
         <?php
         $arr = [];
         foreach (Database::instance()->query("SHOW TABLES;", [], Database::FETCH_ALL) as $item) {
