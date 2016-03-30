@@ -15,17 +15,6 @@ class Database
         $this->dbh = new \PDO("mysql:host=localhost;dbname=x28xioro_mds;charset=utf8", "x28xioro_mds", "MDS123$");
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-//        $this->dbh->exec("
-//        DROP TABLE IF EXISTS users;
-//        CREATE TABLE users (
-//          `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-//          `username` VARCHAR(64),
-//          `password` VARCHAR(64),
-//          UNIQUE(`username`)
-//        );
-//        ");
-
     }
 
     /**
@@ -41,11 +30,11 @@ class Database
 
     /**
      * @param string $string
-     * @param array $array
-     * @param Database ::FETCH_NONE|Database::FETCH_ONE|Database::FETCH_ALL $fetchType
+     * @param array [$array]
+     * @param int [$fetchType]
      * @return mixed|null
      */
-    public function query($string, $array, $fetchType)
+    public function query($string, $array = [], $fetchType = Database::FETCH_NONE)
     {
         try {
 //        echo "<pre>";var_dump("query", $string, $array);echo "</pre>";
