@@ -104,8 +104,7 @@ class View
             $arr[] = $path;
             $path = substr($path, 0, strrpos(substr($path, 0, -1), "/") + 1);
         } while (true);
-
-        return $arr;
+        return array_reverse($arr);
     }
 
     private function continueRun()

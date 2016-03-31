@@ -1,0 +1,58 @@
+.top-bar {
+    background: #333;
+    color: #fff;
+}
+
+@media only screen and (max-width: 40em) {
+    .top-bar .top-bar-title {
+        width: 100%;
+    }
+}
+
+.top-bar .top-bar-title strong {
+    color: #fff;
+    margin: .4rem 0 .4rem .4rem;
+    display: inline-block;
+}
+
+.top-bar .menu-hamburger {
+    float: right;
+}
+
+@media only screen and (max-width: 40em) {
+    .top-bar .menu-hamburger {
+        padding: .4rem;
+    }
+}
+
+.top-bar .menu-hamburger .menu-text {
+    color: #fff;
+}
+
+.top-bar ul {
+    background: #333;
+}
+
+.top-bar ul li a {
+    color: #fff;
+}
+
+.top-bar .input-group {
+    margin-bottom: 0;
+}
+
+.top-bar .dropdown.menu .submenu {
+    border: none;
+}
+
+.top-bar .dropdown.menu > li.is-dropdown-submenu-parent > a:after {
+    border-color: #fff transparent transparent;
+}
+
+.top-bar .is-drilldown-submenu-parent > a::after, .top-bar .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a:after {
+    border-color: transparent transparent transparent #fff;
+}
+
+.top-bar .js-drilldown-back > a:before, .top-bar .is-dropdown-submenu .is-dropdown-submenu-parent.opens-left > a:after {
+    border-color: transparent #fff transparent transparent;
+}
