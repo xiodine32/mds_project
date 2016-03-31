@@ -28,49 +28,6 @@ spl_autoload_register(function ($className) {
     }
 });
 
-
-function describe($tableName)
-{
-    $db = Database::instance();
-    $table = $db->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
-
-    echo "<div class='tabs-panel ' id='" . strtolower($tableName) . "'>";
-    echo "<table style='width: 100%;overflow: hidden;table-layout: fixed;font-size: 0.5em;' class='hover stack'>";
-    echo "<thead>";
-    echo "<tr>";
-    foreach ($table as $item) {
-        echo "<th style='text-align: center;'>{$item['Field']}<br><span style='font-weight: normal;'>{$item['Type']}</span></th>";
-    }
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-    $items = $db->query("SELECT * FROM {$tableName}", [], Database::FETCH_ALL);
-    foreach ($items as $item) {
-        echo "<tr>";
-        foreach ($item as $value) {
-            echo "<td>{$value}</td>";
-        }
-        echo "</tr>";
-    }
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-}
-
-function run($fileName)
-{
-    $query = file_get_contents(__DIR__ . "/migrations/" . $fileName);
-    $database = Database::instance();
-
-    foreach (explode(";", trim($query, ";")) as $item) {
-        echo "<pre>" . print_r($item, true) . "</pre>";
-        echo "<h1>";
-        var_dump($database->query($item));
-        echo "</h1>";
-        echo "<hr>";
-    }
-}
-
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -140,3 +97,51 @@ function run($fileName)
 <script>$("#table-datas").find("li > a").first().click();</script>
 </body>
 </html>
+
+<?php
+
+/**
+ * Echo a table
+ * @param $tableName
+ */
+function describe($tableName)
+{
+    $db = Database::instance();
+    $table = $db->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
+
+    echo "<div class='tabs-panel ' id='" . strtolower($tableName) . "'>";
+    echo "<table style='width: 100%;overflow: hidden;table-layout: fixed;font-size: 0.5em;' class='hover stack'>";
+    echo "<thead>";
+    echo "<tr>";
+    foreach ($table as $item) {
+        echo "<th style='text-align: center;'>{$item['Field']}<br><span style='font-weight: normal;'>{$item['Type']}</span></th>";
+    }
+    echo "</tr>";
+    echo "</thead>";
+    echo "<tbody>";
+    $items = $db->query("SELECT * FROM {$tableName}", [], Database::FETCH_ALL);
+    foreach ($items as $item) {
+        echo "<tr>";
+        foreach ($item as $value) {
+            echo "<td>{$value}</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</tbody>";
+    echo "</table>";
+    echo "</div>";
+}
+
+function run($fileName)
+{
+    $query = file_get_contents(__DIR__ . "/migrations/" . $fileName);
+    $database = Database::instance();
+
+    foreach (explode(";", trim($query, ";")) as $item) {
+        echo "<pre>" . print_r($item, true) . "</pre>";
+        echo "<h1>";
+        var_dump($database->query($item));
+        echo "</h1>";
+        echo "<hr>";
+    }
+}
