@@ -13,7 +13,7 @@ $errors = isset($viewbag['error']);
     <form action="<?= $viewbag['root'] ?>login" method="post" data-abide novalidate>
         <div data-abide-error class="alert callout" style="<?= $errors ? 'display:block' : 'display:none' ?>"
             <?= $errors ? 'role="alert"' : '' ?>>
-            <p><i class="fi-alert"></i><?= $errors ? $viewbag['error'] : "There are some errors in your form." ?></p>
+            <p><i class="fi-alert"></i> <?= $errors ? $viewbag['error'] : "There are some errors in your form." ?></p>
         </div>
         <div class="row">
             <div class="small-3 columns">

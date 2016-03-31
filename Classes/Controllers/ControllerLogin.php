@@ -15,6 +15,7 @@ class ControllerLogin extends Controller
     {
         if (ModelEmployee::fromSession() !== false)
             return new \Redirect("/main/");
+
         $this->viewbag["title"] = "Login";
 
         if (!empty($post['username'])) {
@@ -37,9 +38,8 @@ class ControllerLogin extends Controller
         }
 
         /** @var \Models\ModelEmployee $user */
-        $user = ModelEmployee::databaseSelect('account = ?', [$username]);
-//        var_dump($user);
-        if (!$user) {
+        $user = new ModelEmployee();
+        if (!$user->select('account = ?', [$username])) {
             $this->viewbag['error'] = 'User not found';
             return new \View();
         }

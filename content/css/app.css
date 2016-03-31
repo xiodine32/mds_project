@@ -56,3 +56,7 @@
 .top-bar .js-drilldown-back > a:before, .top-bar .is-dropdown-submenu .is-dropdown-submenu-parent.opens-left > a:after {
     border-color: transparent #fff transparent transparent;
 }
+
+code {
+    white-space: pre-wrap;
+}

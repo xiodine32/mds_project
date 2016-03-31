@@ -29,13 +29,13 @@ class ControllerRegister extends Controller
         }
 
         $user = new ModelEmployee();
-        $user->setAccount($username);
+        $user->account = $username;
         $user->setPassword($password);
 
-        $databaseInsert = $user->databaseInsert();
+        $databaseInsert = $user->insert();
         if ($databaseInsert) {
             /** @var $user2 ModelEmployee */
-            $user2 = ModelEmployee::databaseSelect('account = ?', [$username]);
+            $user2 = $user->select('account = ?', [$username]);
             if ($user2->tryLogin($password))
                 return new \Redirect("/main/");
             $this->viewbag['error'] = 'Passwords must match, username must not be empty and the same for the password!';

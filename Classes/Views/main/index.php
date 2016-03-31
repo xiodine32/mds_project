@@ -5,7 +5,7 @@
 if (!isset($viewbag)) die();
 ?>
 <a href="?logout=true">Logout</a>
-<div class="panel">
+<div class="callout secondary">
     <?php echo "<pre>";
     var_dump($viewbag['employee']);
     echo "</pre>"; ?>

@@ -37,7 +37,7 @@ $user = $viewbag['employee'];
             </div>
             <div class="top-bar-right">
                 <ul class="menu" data-responsive-menu="drilldown medium-dropdown">
-                    <li><span>Welcome, <?= $user->getFirstName() ?></span>&nbsp;</li>
+                    <li><span>Welcome, <?= $user->firstName ?></span>&nbsp;</li>
                     <li class="active"><a href="<?= $viewbag['root'] ?>main/logout">Logout</a></li>
                     <!--                    <li class="has-submenu">-->
                     <!--                        <a href="#">Right link dropdown</a>-->
