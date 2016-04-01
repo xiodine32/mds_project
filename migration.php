@@ -35,9 +35,19 @@ spl_autoload_register(function ($className) {
 });
 
 if (!empty($_GET['classFor'])) {
-    die(classFor($_GET['classFor']));
+    $code = classFor($_GET['classFor']);
+    echo "<a href='?overwrite={$_GET['classFor']}' onclick='return confirm(\"You sure?\");'>Overwrite</a><pre><textarea onclick='this.select();' style='font-size: 0.5em;' rows='50'>{$code}</textarea></pre>";
+    die();
 }
-
+if (!empty($_GET['overwrite'])) {
+    $code = classFor($_GET['overwrite']);
+    $singleName = substr($_GET['overwrite'], 0, -1);
+    $modelName = "Model{$singleName}";
+    $filePath = __DIR__ . "/Classes/Models/{$modelName}.php";
+    file_put_contents($filePath, $code);
+    header("Location: migration.php");
+    die();
+}
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -167,7 +177,22 @@ function classFor($tableName)
     $table = $db->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
     $fields = [];
     foreach ($table as $item) {
-        $fields[] = "    public \${$item['Field']};";
+        $fieldName = $item['Type'];
+        if ($firstP = strpos($fieldName, "(")) {
+            $fieldName = substr($fieldName, 0, $firstP);
+        }
+        if (in_array($fieldName, ['varchar', 'date', 'text', 'char']))
+            $fieldName = 'string';
+        if (in_array($fieldName, ['bit']))
+            $fieldName = 'int';
+
+        if ($item['Null'] === 'YES')
+            $fieldName .= "|null";
+
+        $fields[] = "    /** 
+     * @var {$fieldName} \${$item['Field']} 
+     */
+    public \${$item['Field']};\n";
     }
     $fields = join("\n", $fields);
 
@@ -201,5 +226,5 @@ class {$modelName} extends SmartModel
     }
 
 }";
-    return "<pre><textarea onclick='this.select();' style='font-size: 0.5em;' rows='50'>{$code}</textarea></pre>";
+    return $code;
 }
