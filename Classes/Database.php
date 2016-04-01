@@ -97,10 +97,12 @@ class Database
 
     /**
      * Returns last error.
-     * @return string Last error in a readable format.
+     * @return false|string Last error in a readable format.
      */
     public function lastError()
     {
+        if ($this->lastError === null)
+            return false;
         // get message
         $message = $this->lastError->getMessage();
 

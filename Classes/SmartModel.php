@@ -7,6 +7,7 @@ abstract class SmartModel
 {
     private $tableName;
     private $child;
+    private $oldDatabaseTable;
 
     /**
      * SmartModel constructor.
@@ -17,6 +18,7 @@ abstract class SmartModel
     {
         $this->child = $theThis;
         $this->tableName = $tableName;
+        $this->oldDatabaseTable = [];
     }
 
 
@@ -41,6 +43,8 @@ abstract class SmartModel
             else
                 $prepared[] = $this->child->$item;
         }
+
+        $this->oldDatabaseTable = $prepared;
 
         $selects = join(", ", $selects);
         $questions = join(", ", $questions);
@@ -86,13 +90,61 @@ abstract class SmartModel
 
         $prepared[] = $this->child->$primaryKey;
 
-        $selects = join(", ", $selects);
+        $selectsCurated = [];
+        $preparedCurated = [];
+
+//        echo "<pre>";var_dump("before", $prepared);echo "</pre>";
+
+        // if was selected, do a diff.
+        if (count($this->oldDatabaseTable) != count($keys) + 1) {
+
+            $selectsCurated = $selects;
+            $preparedCurated = $prepared;
+
+        } else {
+
+            $old = array_values($this->oldDatabaseTable);
+            $oldKeys = array_keys($this->oldDatabaseTable);
+            $n = count($old);
+
+            for ($i = 0; $i < $n; $i++) {
+
+                // primary key is first, so wrap backwards.
+                $left = $prepared[($i + $n - 1) % $n];
+                $right = $old[$i];
+
+                // strict type casting is NOT USED (FOR GOOD REASONS!)
+                if ($left != $right) {
+
+                    $item = $oldKeys[$i];
+
+                    // update in table
+                    $this->oldDatabaseTable[$item] = $left;
+
+                    $selectsCurated[] = "`{$item}` = ?";
+
+
+                    if ($this->child->$item === null)
+                        $preparedCurated[] = null;
+                    else
+                        $preparedCurated[] = $this->child->$item;
+                }
+            }
+        }
+
+        if (!count($preparedCurated))
+            return true;
+
+        $preparedCurated[] = $this->child->$primaryKey;
+
+        $selects = join(", ", $selectsCurated);
+
 
         $stmt = "UPDATE `{$this->tableName}` SET {$selects} WHERE `{$primaryKey}` = ?";
 //        echo "<pre>";var_dump($stmt);echo "</pre>";
-//        echo "<pre>";var_dump($prepared);echo "</pre>";
+//        echo "<pre>";var_dump($preparedCurated);echo "</pre>";
 //        die();
-        return Database::instance()->query($stmt, $prepared, \Database::FETCH_NONE) !== false;
+        return Database::instance()->query($stmt, $preparedCurated, \Database::FETCH_NONE) !== false;
     }
 
     /**
@@ -122,6 +174,8 @@ abstract class SmartModel
 
         if ($arr === false)
             return false;
+
+        $this->oldDatabaseTable = $arr;
 
         $this->setFromArray($arr, $this->child);
 

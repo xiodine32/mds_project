@@ -57,13 +57,10 @@ if (!empty($_GET['overwriteall'])) {
         $modelName = "Model{$singleName}";
         $code = classFor($table, $modelName);
         $filePath = $modelPath . "{$modelName}.php";
-        echo "<pre>";
-        var_dump($filePath);
-        echo "</pre>";
         file_put_contents($filePath, $code);
     }
-//    header("Location: migration.php");
-//    die();
+    header("Location: migration.php");
+    die();
 }
 ?>
 <!doctype html>
@@ -206,7 +203,7 @@ function classFor($tableName, $modelName = null)
             $fieldName .= "|null";
 
         $fields[] = "    /**
-     * @var {$fieldName} \${$item['Field']} 
+     * @var {$fieldName} \${$item['Field']}
      */
     public \${$item['Field']};\n";
     }
