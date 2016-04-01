@@ -10,7 +10,7 @@ use SmartModel;
 
 
 /**
- * Class ModelEmployee
+ * Model Employee.
  * @package Models
  */
 class ModelEmployee extends SmartModel implements \ISessionable
