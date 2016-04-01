@@ -9,6 +9,7 @@ namespace Controllers\Main;
 use Models\ModelEmployee;
 
 /**
+ * @abstract
  * Abstract Main Controller. Assures Employee is logged in.
  * @package Controllers\Main
  */

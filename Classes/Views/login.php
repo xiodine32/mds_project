@@ -40,7 +40,6 @@ $errors = isset($viewbag['error']);
         <div class="row">
             <div class="small-offset-3 small-9 column">
                 <button type="submit" class="button">Login</button>
-                <a href="<?= $viewbag['root'] ?>register" class="button secondary">Register</a>
             </div>
         </div>
     </form>

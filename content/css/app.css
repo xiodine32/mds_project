@@ -60,3 +60,37 @@
 code {
     white-space: pre-wrap;
 }
+
+.top-most {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#hidden-div {
+    -webkit-transition: all 250ms;
+    -moz-transition: all 250ms;
+    -ms-transition: all 250ms;
+    -o-transition: all 250ms;
+    transition: all 250ms;
+
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#hidden-div.visible {
+    opacity: 1;
+    max-height: 3000px;
+    overflow: visible;
+}
+
+.label-bottom {
+    border-bottom-left-radius: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

@@ -18,6 +18,7 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
     <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/foundation.min.css"/>
     <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/foundation-icons.css">
     <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/app.css"/>
+    <script src="<?= $viewbag['root'] ?>content/js/vendor/jquery.min.js"></script>
 </head>
 <body>
 <div class="row">
@@ -25,7 +26,6 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
         <?php $this->continueRun(); ?>
     </div>
 </div>
-<script src="<?= $viewbag['root'] ?>content/js/vendor/jquery.min.js"></script>
 <script src="<?= $viewbag['root'] ?>content/js/vendor/what-input.min.js"></script>
 <script src="<?= $viewbag['root'] ?>content/js/foundation.min.js"></script>
 <script src="<?= $viewbag['root'] ?>content/js/app.js"></script>

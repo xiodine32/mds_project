@@ -13,7 +13,7 @@ class Redirect extends View
      */
     public function __construct($name)
     {
-        parent::__construct($name, true);
+        parent::__construct($name, null);
         $this->name = $name;
     }
 
@@ -23,6 +23,8 @@ class Redirect extends View
      */
     public function apply($viewbag)
     {
+        if ($this->isPartial())
+            return;
         $this->name = ltrim($this->name, "/");
         header("Location: " . $this->applyRoot() . $this->name);
     }

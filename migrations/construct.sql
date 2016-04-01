@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS Contacts;
 DROP TABLE IF EXISTS Projects;
 DROP TABLE IF EXISTS Sprints;
 DROP TABLE IF EXISTS Tasks;
+
 CREATE TABLE Departments (
   departmentID    INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   title           VARCHAR(50)     NOT NULL,
@@ -14,6 +15,8 @@ CREATE TABLE Departments (
   startDate       DATE            NOT NULL,
   monthlyExpenses DOUBLE          NOT NULL
 );
+
+# tester/ senior developer / project manager / recruiter
 CREATE TABLE Roles (
   roleID         INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   name           VARCHAR(50)     NOT NULL,
@@ -102,12 +105,12 @@ CREATE TABLE Sprints (
 CREATE TABLE Tasks (
   taskID          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 
-  sprintID        INT             NOT NULL,
-  employeeID      INT             NOT NULL,
-  roleID          INT             NOT NULL,
+  sprintID        INT,
+  employeeID      INT,
+  roleID          INT,
 
-  startDate       DATE            NOT NULL,
-  endDate         DATE            NOT NULL,
+  startDate       DATE,
+  endDate         DATE,
 
   taskDescription TEXT            NOT NULL,
   difficulty      INT(2)          NOT NULL,
@@ -116,7 +119,7 @@ CREATE TABLE Tasks (
 
   CONSTRAINT FK_SprintID FOREIGN KEY (sprintID)
   REFERENCES Sprints (sprintID)
-    ON DELETE CASCADE
+    ON DELETE SET NULL
     ON UPDATE NO ACTION,
 
   CONSTRAINT FK_EmployeeIDTasks FOREIGN KEY (employeeID)

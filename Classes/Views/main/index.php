@@ -31,9 +31,9 @@ if (!isset($viewbag)) die();
         </a>
     </div>
     <div class="small-6 columns">
-        <a href="<?= $viewbag['root'] ?>main/settings">
+        <a href="<?= $viewbag['root'] ?>main/profile">
             <div class="callout text-center">
-                <p>Your Account</p>
+                <p>Your Profile</p>
             </div>
         </a>
 

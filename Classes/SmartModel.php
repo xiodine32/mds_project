@@ -68,6 +68,34 @@ abstract class SmartModel
         return array_keys($publics);
     }
 
+    function __toString()
+    {
+        $publics = $this->getPublicMembers();
+        $text = [substr(get_called_class(), 7)];
+        $max = 0;
+        foreach ($publics as $item) {
+            $strlen = strlen($item);
+            $max = $max > $strlen ? $max : $strlen;
+        }
+        foreach ($publics as $item) {
+            $i = " * <strong>" . str_pad($item, $max, ' ') . "</strong> => ";
+            $result = $this->child->$item;
+            if ($result === null)
+                $i .= "NULL";
+            elseif ($result === true)
+                $i .= "TRUE";
+            elseif ($result === false)
+                $i .= "FALSE";
+            elseif (is_numeric($result))
+                $i .= "{$result}";
+            else
+                $i .= "'{$result}'";
+            $text[] = $i;
+        }
+        return "(" . implode("\n", $text) . "\n)";
+    }
+
+
     /**
      * Updates the current model in the Database.
      * @return bool True if updated successfully.
@@ -117,8 +145,6 @@ abstract class SmartModel
                 if ($left != $right) {
 
                     $item = $oldKeys[$i];
-
-                    // update in table
                     $this->oldDatabaseTable[$item] = $left;
 
                     $selectsCurated[] = "`{$item}` = ?";

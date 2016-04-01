@@ -77,7 +77,19 @@ abstract class Controller
      */
     protected function isGet($key, $value = null)
     {
-        return isset($_GET[$key]) && (($value !== null && $_GET[$key] === $value) || $value === null);
+        return $this->is($_GET, $key, $value);
+    }
+
+    /**
+     * An element exists.
+     * @param mixed $array Array to check against.
+     * @param string $key Key of array to check.
+     * @param mixed|null [$value] Value of get element. If null, only existance is checked.
+     * @return bool True if exists and (true if value is not null and equal to requested value or true if value is null)
+     */
+    protected function is($array, $key, $value = null)
+    {
+        return isset($array[$key]) && (($value !== null && $array[$key] === $value) || $value === null);
     }
 
     /**
@@ -88,7 +100,7 @@ abstract class Controller
      */
     protected function isPost($key, $value = null)
     {
-        return isset($_POST[$key]) && (($value !== null && $_POST[$key] === $value) || $value === null);
+        return $this->is($_POST, $key, $value);
     }
 
 }

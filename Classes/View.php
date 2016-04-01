@@ -20,12 +20,26 @@ class View
     /**
      * View constructor.
      * @param null|string $name null if default view (for Controller) or view for controller.
-     * @param boolean $isPartial If true, will display view without layout.
+     * @param null|boolean $isPartial If true, will display view without layout.
      */
-    public function __construct($name = null, $isPartial = false)
+    public function __construct($name = null, $isPartial = null)
     {
         $this->name = $name;
         $this->partial = $isPartial;
+
+        // if partial is null, decide for myself
+        if ($this->partial === null) {
+
+            // if ajax, it's partial
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'
+            )
+                $this->partial = true;
+            else
+                $this->partial = false;
+        }
+
+
     }
 
     /**
@@ -114,6 +128,8 @@ class View
             if (is_file($this->name)) {
                 /** @noinspection PhpIncludeInspection */
                 require $this->name;
+            } else {
+                echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
             }
         }
 
@@ -194,6 +210,8 @@ class View
             $viewbag = $this->viewbag;
             /** @noinspection PhpIncludeInspection */
             require $item;
+        } else {
+            echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
         }
     }
 }
