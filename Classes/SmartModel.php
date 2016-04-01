@@ -10,8 +10,8 @@ abstract class SmartModel
 
     /**
      * SmartModel constructor.
-     * @param \SmartModel $theThis
-     * @param string $tableName
+     * @param \SmartModel $theThis To receive public members.
+     * @param string $tableName Table name in Database.
      */
     public function __construct($theThis, $tableName)
     {
@@ -19,6 +19,11 @@ abstract class SmartModel
         $this->tableName = $tableName;
     }
 
+
+    /**
+     * Inserts the current model into the database.
+     * @return bool True if inserted successfully.
+     */
     public function insert()
     {
         $publics = $this->getPublicMembers();
@@ -50,7 +55,8 @@ abstract class SmartModel
     }
 
     /**
-     * @return string[]
+     * Gets public members of child class.
+     * @return string[] Public members.
      */
     private function getPublicMembers()
     {
@@ -58,6 +64,10 @@ abstract class SmartModel
         return array_keys($publics);
     }
 
+    /**
+     * Updates the current model in the Database.
+     * @return bool True if updated successfully.
+     */
     public function update()
     {
         $keys = $this->getPublicMembers();
@@ -85,6 +95,12 @@ abstract class SmartModel
         return Database::instance()->query($stmt, $prepared, \Database::FETCH_NONE) !== false;
     }
 
+    /**
+     * Transforms the model into the selected query.
+     * @param string $where SQL where.
+     * @param array $prepared Prepared array for where.
+     * @return bool True if child became selected element.
+     */
     public function select($where = '', $prepared = [])
     {
         $selects = [];
@@ -107,20 +123,29 @@ abstract class SmartModel
         if ($arr === false)
             return false;
 
-        foreach ($arr as $key => $item) {
-            $this->child->$key = $item;
-        }
+        $this->setFromArray($arr, $this->child);
 
         return true;
     }
 
-    public function selectFirst($array)
+    /**
+     * Transforms child from table array into object (by selecting first element)
+     * @param array $array Table array.
+     * @param \SmartModel $element Element to be modified (by reference)
+     */
+    private function setFromArray($array, &$element)
     {
-        foreach (reset($array) as $key => $item) {
-            $this->child->$key = $item;
+        foreach ($array as $key => $item) {
+            $element->$key = $item;
         }
     }
 
+    /**
+     * Selects all objects that match the where.
+     * @param string $where SQL where.
+     * @param array $prepared Prepared array for where.
+     * @return array|bool False if error or array with instantiated objects if success.
+     */
     public function selectAll($where = '', $prepared = [])
     {
         $selects = [];
@@ -146,15 +171,17 @@ abstract class SmartModel
         $returnItems = [];
         foreach ($arr as $items) {
             $leItem = new $this->child();
-            foreach ($items as $key => $item) {
-                $leItem->$key = $item;
-            }
+            $this->setFromArray($items, $leItem);
             $returnItems[] = $leItem;
         }
 
         return $returnItems;
     }
 
+    /**
+     * Deletes the object from the Database
+     * @return bool True if no error occured.
+     */
     public function delete()
     {
         $primaryKey = $this->getPublicMembers()[0];

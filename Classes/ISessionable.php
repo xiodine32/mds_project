@@ -3,6 +3,10 @@
 /**
  * Created at: 29/03/16 16:14
  */
+
+/**
+ * Interface ISessionable
+ */
 interface ISessionable
 {
     /**

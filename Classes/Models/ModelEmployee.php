@@ -1,12 +1,17 @@
 <?php
-/** @noinspection PhpUnusedPrivateFieldInspection */
+
+/**
+ * Created at: 29/03/16 15:44
+ */
 
 namespace Models;
 
 use SmartModel;
 
+
 /**
- * Created at: 29/03/16 15:44
+ * Class ModelEmployee
+ * @package Models
  */
 class ModelEmployee extends SmartModel implements \ISessionable
 {
@@ -55,18 +60,29 @@ class ModelEmployee extends SmartModel implements \ISessionable
         unset($_SESSION['employee']);
     }
 
+    /**
+     * Tries to login Employee with requested password.
+     * @param string $password
+     * @return bool True if Employee logged in successfully.
+     */
     public function tryLogin($password)
     {
+        // if password is not encrypted (migration tool), transform it into bcrypt password and update model.
         if ($this->password === $password) {
             $this->password = password_hash($this->password, PASSWORD_BCRYPT);
             self::update();
             self::toSession($this);
             return true;
         }
+
+        // if not valid
         if (!password_verify($password, $this->password)) {
             return false;
         }
+
+        // save to session
         self::toSession($this);
+
         return true;
     }
 
@@ -81,6 +97,7 @@ class ModelEmployee extends SmartModel implements \ISessionable
 
 
     /**
+     * Encrypts the password.
      * @param mixed $password
      */
     public function setPassword($password)

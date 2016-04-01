@@ -3,9 +3,15 @@
  * Created at: 30/03/16 15:56
  */
 
+// start session
 session_start();
+
+// display errors
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
+
+
+// autoload classes
 
 spl_autoload_register(function ($className) {
     $className = ltrim($className, '\\');
@@ -102,7 +108,7 @@ spl_autoload_register(function ($className) {
 
 /**
  * Echo a table
- * @param $tableName
+ * @param $tableName string Table Name.
  */
 function describe($tableName)
 {
@@ -132,6 +138,10 @@ function describe($tableName)
     echo "</div>";
 }
 
+/**
+ * Run a SQL file.
+ * @param $fileName string File name.
+ */
 function run($fileName)
 {
     $query = file_get_contents(__DIR__ . "/migrations/" . $fileName);

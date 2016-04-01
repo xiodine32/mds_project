@@ -9,15 +9,18 @@ class Redirect extends View
 
     /**
      * View constructor.
-     * @param null|string $name
-     * @param boolean $isPartial
+     * @param null|string $name Name of file (relative to current controller)
      */
     public function __construct($name)
     {
-        parent::__construct($name, false);
+        parent::__construct($name, true);
         $this->name = $name;
     }
 
+    /**
+     * Apply view into existance.
+     * @param $viewbag array Viewbag
+     */
     public function apply($viewbag)
     {
         $this->name = ltrim($this->name, "/");
