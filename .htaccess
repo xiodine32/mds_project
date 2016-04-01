@@ -2,6 +2,7 @@ RedirectMatch 404 controllers
 RedirectMatch 404 models
 RedirectMatch 404 views
 RedirectMatch 404 assist
+RedirectMatch 404 README.md
 #ErrorDocument index.php?page=404
 
 RewriteEngine on
