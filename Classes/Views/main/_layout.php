@@ -30,9 +30,9 @@ $user = $viewbag['employee'];
         <div id="responsive-menu">
             <div class="top-bar-left">
                 <ul class="menu" data-responsive-menu="drilldown medium-dropdown">
-                    <li><a href="#">Monthly Schedule</a></li>
-                    <li><a href="#">Projects</a></li>
-                    <li><a href="#">Employees</a></li>
+                    <li><a href="<?= $viewbag['root'] ?>main/calendar">Calendar</a></li>
+                    <li><a href="<?= $viewbag['root'] ?>main/projects">Projects</a></li>
+                    <li><a href="<?= $viewbag['root'] ?>main/employees">Employees</a></li>
                 </ul>
             </div>
             <div class="top-bar-right">

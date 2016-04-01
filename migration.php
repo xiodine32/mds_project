@@ -178,7 +178,7 @@ function run($fileName)
     $query = file_get_contents(__DIR__ . "/migrations/" . $fileName);
     $database = Database::instance();
 
-    foreach (explode(";", trim($query, ";")) as $item) {
+    foreach (explode(";", trim($query, "; \t\n\r\0\x0B")) as $item) {
         echo "<pre>" . print_r($item, true) . "</pre>";
         echo "<h1>";
         var_dump($database->query($item));
@@ -205,7 +205,7 @@ function classFor($tableName, $modelName = null)
         if ($item['Null'] === 'YES')
             $fieldName .= "|null";
 
-        $fields[] = "    /** 
+        $fields[] = "    /**
      * @var {$fieldName} \${$item['Field']} 
      */
     public \${$item['Field']};\n";
@@ -224,7 +224,7 @@ function classFor($tableName, $modelName = null)
 
 namespace Models\\Generated;
 
-use \\SmartModel;
+use SmartModel;
 
 /**
  * Model {$singleName}.
