@@ -1,4 +1,4 @@
-# Resource Allocator Tracker
+# Resource Allocation Tool
 
 What this is:
 
