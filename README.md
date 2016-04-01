@@ -19,3 +19,7 @@ Contributors:
 -   Radu Bucur
 -   Rares-Florian Neagu
 -   Bulete Vlad
+
+## Example
+
+A fully functional example can be found at https://xio.ro/mds/
