@@ -82,7 +82,7 @@ class FormGenerator
     </div>
 </div>\n";
         if ($requiredType === "date") {
-            $this->generatedScripts .= "$('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});";
+            $this->generatedScripts .= "<script>(function() { $('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});})();</script>\n";
         }
 
     }
@@ -133,7 +133,7 @@ class FormGenerator
             </div>
 {$this->generatedHTML}
         </form>
-        <script>(function () { {$this->generatedScripts} })();</script>
+        {$this->generatedScripts}
         </section>";
     }
 
