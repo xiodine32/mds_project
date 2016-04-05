@@ -104,9 +104,9 @@ class View
         // set the viewbag
         $this->viewbag = $viewbag;
 
-        // set the root
+        // set existing values
         $this->viewbag['root'] = $this->applyRoot();
-
+        $this->viewbag['partial'] = $this->partial;
 
         // if not partial, call recursively the layout engine.
         if (!$this->partial) {
@@ -123,9 +123,10 @@ class View
             // call the view
             $this->continueRun();
         } else {
-
             // if partial file exists, display it.
             if (is_file($this->name)) {
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $viewbag = $this->viewbag;
                 /** @noinspection PhpIncludeInspection */
                 require $this->name;
             } else {

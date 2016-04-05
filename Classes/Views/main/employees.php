@@ -9,7 +9,7 @@ $success = isset($viewbag['success']);
 ?>
 <h1 class="text-center">Employees</h1>
 <hr>
-<section>
+<section id="addEmployee">
     <?php if ($viewbag['employee']->administrator): ?>
         <h3 class="text-center">Register new employee</h3>
         <?php if ($success): ?>

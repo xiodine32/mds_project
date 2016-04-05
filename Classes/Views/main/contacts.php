@@ -1,23 +1,21 @@
 <?php
 /**
- * Created at: 01/04/16 17:37
+ * Created at: 05/04/16 17:12
  */
 if (!isset($viewbag)) die();
 $errors = isset($viewbag['error']);
 $success = isset($viewbag['success']);
 ?>
-<!--TODO: add departments-->
-<!--TODO: add contact quick add.-->
-<h1 class="text-center">Projects</h1>
-<section id="addProject">
+<h1 class="text-center">Contacts</h1>
+<section id="addContact">
     <?php if ($viewbag['employee']->administrator): ?>
-        <h3 class="text-center">Register new project</h3>
+        <h3 class="text-center">Register new contact</h3>
         <?php if ($success): ?>
             <div class="callout success">
                 <?= $viewbag['success'] ?>
             </div>
         <?php endif ?>
-        <form action="<?= $viewbag['root'] ?>main/projects" method="post" data-abide novalidate>
+        <form action="<?= $viewbag['root'] ?>main/contacts" method="post" data-abide novalidate>
             <div data-abide-error class="alert callout" style="<?= $errors ? 'display:block' : 'display:none' ?>"
                 <?= $errors ? 'role="alert"' : '' ?>>
                 <p><i class="fi-alert"></i><?= $errors ? $viewbag['error'] : "There are some errors in your form." ?>
@@ -119,22 +117,6 @@ $success = isset($viewbag['success']);
                 </div>
             </div>
 
-            <!-- contactID -->
-            <div class="row">
-                <div class="small-3 columns">
-                    <label for="contactID"
-                           class="text-right middle<?= $errors ? ' is-invalid-label' : '' ?>">Contact: </label>
-                </div>
-                <div class="small-9 columns">
-                    <select class="<?= $errors ? ' is-invalid-input' : '' ?>" id="contactID" required name="contactID">
-                        <option value="">--- NONE ---</option>
-                        <option value="somethign">--- NONE ---</option>
-                    </select>
-                    <a href="#" onclick="return false;" id="addContact" class="button success small">Add Contact</a>
-                    <span class="form-error">Error here, please fix!</span>
-                </div>
-            </div>
-
             <!-- Submit -->
             <div class="row">
                 <div class="small-3 columns">
@@ -147,22 +129,4 @@ $success = isset($viewbag['success']);
             </div>
         </form>
     <?php endif ?>
-    <div class="reveal" id="quickAdd" data-reveal data-close-on-click="true" data-animation-in="fade-in"
-         data-animation-out="fade-out">
-        <div id="quickAdd-content">
-
-        </div>
-        <button class="close-button" data-close aria-label="Close reveal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
 </section>
-<script src="<?= $viewbag['root'] ?>content/main/quickadd.js"></script>
-<script>
-    (function () {
-        $('#addContact').click(function () {
-            new QuickAdd("<?=$viewbag['root']?>main/contacts", "#addContact");
-            //TODO: trigger refresh on contactID
-        });
-    })();
-</script>
