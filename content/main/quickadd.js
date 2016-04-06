@@ -40,6 +40,6 @@ function QuickAdd(target, selector) {
         close: function (item) {
             onclose = item;
         }
-    }
+    };
 }
 /*eslint-enable no-unused-vars*/
