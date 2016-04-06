@@ -36,17 +36,17 @@ class FormGenerator
 
     /**
      * @param string $inputType Input type.
-     * @param string $inputID ID and Name (see options) text.
+     * @param string $inputID ID text.
+     * @param string $inputName Name text.
      * @param string $inputText Placeholder text.
      * @param string $inputErrorText Error text.
      * @param boolean|string $requiredType <b>TRUE</b> if input is required, <b>"TEXT"</b> if input is required and pattern requested, <b>FALSE</b> otherwise.
      * @param array [$options] can be:
      * <ul>
      * <li>'options' => [] ... for selects</li>
-     * <li>name => "something" for different name</li>
      * </ul>
      */
-    public function addInput($inputType, $inputID, $inputText, $inputErrorText, $requiredType, $options = [])
+    public function addInput($inputType, $inputID, $inputName, $inputText, $inputErrorText, $requiredType, $options = [])
     {
         $labelClass = 'text-right middle' . ($this->error ? ' is-invalid-label' : '');
         $inputClass = ($this->error ? 'is-invalid-input' : '');
@@ -54,12 +54,13 @@ class FormGenerator
         $inputTypeText = $this->constructInput($inputType,
             $inputID,
             $inputText,
+            $inputName,
             $options,
             $this->constructRequireAttribute($requiredType),
             $inputClass);
 
         if ($requiredType === "date") {
-            $this->generatedScripts .= "<script>$(function() { $('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});});</script>\n";
+            $this->generatedScripts .= "<script>$(function() { $(\"#{$inputID}\").datepicker({inline:true, dateFormat: \"yy-mm-dd\"});});</script>\n";
         }
 
         $this->generatedHTML .= "<!-- {$inputID} -->
@@ -79,8 +80,9 @@ class FormGenerator
     /**
      * Constructs the input, depending on $inputType.
      * @param string $inputType Input type.
-     * @param string $inputID ID and Name (see options) text.
+     * @param string $inputID ID text.
      * @param string $inputText Placeholder text.
+     * @param string $inputName Name text.
      * @param $options array can be:
      * <ul>
      * <li>'options' => [] ... for selects</li>
@@ -88,19 +90,13 @@ class FormGenerator
      * </ul>
      * @param string $translatedRequired Required & pattern translated to attribute text.
      * @param $inputClass string Input classes.
-     * @return string
+     * @return string <ul>
      * <ul>
      * <li>'options' => [] ... for selects</li>
-     * <li>name => "something" for different name</li>
      * </ul>
      */
-    private function constructInput($inputType, $inputID, $inputText, $options, $translatedRequired, $inputClass)
+    private function constructInput($inputType, $inputID, $inputText, $inputName, $options, $translatedRequired, $inputClass)
     {
-
-        $inputName = $inputID;
-        if (isset($options['name']))
-            $inputName = $options['name'];
-
         if ($inputType === 'select') {
 
             $theOptions = isset($options['options']) ? $options['options'] : [];
@@ -167,7 +163,7 @@ class FormGenerator
     public function generate()
     {
         if ($this->ajax)
-            $this->generatedScripts = "";
+            $this->generatedScripts = "<script>$(function () { alert('ajax enabled'); });</script>";
         $successText = "";
         if ($this->success)
             $successText = "<div class=\"callout success\">{$this->successMessage}</div>";
@@ -190,7 +186,7 @@ class FormGenerator
             </div>
 {$this->generatedHTML}
         </form>
-        {$this->generatedScripts}
+{$this->generatedScripts}
         </section>";
     }
 

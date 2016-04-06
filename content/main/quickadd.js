@@ -26,9 +26,9 @@ function QuickAdd(target, selector) {
         onclose();
     });
 
-    var filename = target + " " + selector;
-    $modal.find("#quickAdd-content").load(filename, function () {
-
+    $modal.find("#quickAdd-content").load(target, function () {
+        var $me = $(this);
+        $me.children($me.find(selector));
         // open modal
         popup.open();
 
