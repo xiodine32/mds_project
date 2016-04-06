@@ -47,24 +47,12 @@ class FormGenerator
         $labelClass = 'text-right middle' . ($this->error ? ' is-invalid-label' : '');
         $inputClass = ($this->error ? 'is-invalid-input' : '');
 
-        $translatedRequired = 'required';
-        if (!$requiredType) {
-            $translatedRequired = '';
-        } elseif ($requiredType !== true) {
-            $translatedRequired .= " pattern=\"{$requiredType}\"";
-        }
-        $inputTypeText = "<input type=\"text\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\">";
-        if ($inputType === 'select') {
-            $theOptions = isset($options['options']) ? $options['options'] : [];
-            $optionsText = '<option value="">--- NONE ---</option>';
-            foreach ($theOptions as $key => $value) {
-                $optionsText .= "<option value='{$key}'>{$value}</option>\n";
-            }
-            $inputTypeText = "<select name=\"{$inputID}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
-{$optionsText}
-</select>";
-        }
+        $inputTypeText = $this->constructInput($inputType,
+            $inputID,
+            $inputText,
+            $options,
+            $this->constructRequireAttribute($requiredType),
+            $inputClass);
 
         $this->generatedHTML .= "<!-- {$inputID} -->
 <div class=\"row\">
@@ -77,10 +65,66 @@ class FormGenerator
         <span class=\"form-error\">{$inputErrorText}</span>
     </div>
 </div>\n";
+
         if ($requiredType === "date") {
             $this->generatedScripts .= "<script>(function() { $('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});})();</script>\n";
         }
 
+    }
+
+    /**
+     * @param string $inputType
+     * @param string $inputID
+     * @param string $inputText
+     * @param array $options
+     * @param string $translatedRequired
+     * @param string $inputClass
+     * @return string
+     */
+    private function constructInput($inputType, $inputID, $inputText, $options, $translatedRequired, $inputClass)
+    {
+
+        if ($inputType === 'select') {
+
+            $theOptions = isset($options['options']) ? $options['options'] : [];
+
+            $optionsText = '<option value="">--- NONE ---</option>';
+
+            foreach ($theOptions as $key => $value) {
+                $optionsText .= "<option value='{$key}'>{$value}</option>\n";
+            }
+
+            return "<select name=\"{$inputID}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
+{$optionsText}
+</select>";
+        }
+
+        if ($inputType === 'date') {
+            return "<input type=\"date\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
+                        {$translatedRequired} class=\"{$inputClass}\">";
+        }
+
+        return "<input type=\"text\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
+                        {$translatedRequired} class=\"{$inputClass}\">";
+    }
+
+    /**
+     * @param boolean|string $requiredType
+     * @return string
+     */
+    private function constructRequireAttribute($requiredType)
+    {
+        $requiredAttribute = 'required';
+
+        if (!$requiredType) {
+            return '';
+        }
+
+        if ($requiredType === true) {
+            return $requiredAttribute;
+        }
+
+        return $requiredAttribute . " pattern=\"{$requiredType}\"";
     }
 
     /**
