@@ -22,7 +22,7 @@ function QuickAdd(target, selector) {
     //noinspection JSUnresolvedFunction
     var popup = new Foundation.Reveal($modal);
 
-    $modal.bind('closed.zf.reveal', function () {
+    $modal.bind("closed.zf.reveal", function () {
         onclose();
     });
 
@@ -33,7 +33,7 @@ function QuickAdd(target, selector) {
         popup.open();
 
         // add datepicker
-        $modal.find('input[pattern=date]').datepicker({dateFormat: 'yy-mm-dd'});
+        $modal.find("input[pattern=date]").datepicker({dateFormat: "yy-mm-dd"});
     });
 
     return {
