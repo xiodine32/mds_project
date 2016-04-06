@@ -26,7 +26,7 @@ class Redirect extends View
         if ($this->isPartial())
             return;
         $this->name = ltrim($this->name, "/");
-        header("Location: " . $this->applyRoot() . $this->name);
+        header("Location: " . $this->applyRoot($viewbag['request']) . $this->name);
     }
 
 

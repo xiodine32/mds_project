@@ -87,12 +87,11 @@ class View
      */
     public function apply($viewbag)
     {
+        /**@var Request $request */
+        $request = $viewbag['request'];
 
         // if partial is null, decide for myself
         if ($this->partial === null) {
-
-            /**@var Request $request */
-            $request = $viewbag['request'];
 
             // if ajax, it's partial
             $this->partial = !empty($request->server['HTTP_X_REQUESTED_WITH']) &&
@@ -103,7 +102,7 @@ class View
         $this->viewbag = $viewbag;
 
         // set existing values
-        $this->viewbag['root'] = $this->applyRoot();
+        $this->viewbag['root'] = $this->applyRoot($request);
         $this->viewbag['partial'] = $this->partial;
 
         // if not partial, call recursively the layout engine.
@@ -137,14 +136,13 @@ class View
 
     /**
      * Constructs the view path (taking into account the depth of the current path)
-     * Uses $GLOBALS['PAGE_STR'].
+     * @param Request $request
      * @return string
-     *
      */
-    protected function applyRoot()
+    protected function applyRoot($request)
     {
         $depth = 0;
-        str_replace("/", "", $GLOBALS['PAGE_STR'], $depth);
+        str_replace("/", "", $request->globals['PAGE_STR'], $depth);
         $root = './';
         $root .= str_repeat("../", $depth);
         return $root;

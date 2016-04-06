@@ -10,7 +10,6 @@
 abstract class Controller
 {
     protected $viewbag;
-    private $request;
 
     /**
      * Controller constructor.
@@ -18,7 +17,6 @@ abstract class Controller
     public function __construct()
     {
         $this->viewbag = [];
-        $this->request = Request::getInstance();
     }
 
     /**
@@ -26,14 +24,19 @@ abstract class Controller
      */
     public function run()
     {
+        $request = Request::getInstance();
+
         // call controller to get view
-        $view = $this->call($this->request);
+        $view = $this->call($request);
+
+        // lock session
+        $request->lockSession();
 
         // set view name
         $view->setImplicitViewName(get_called_class());
 
         // set viewbag request
-        $this->viewbag['request'] = $this->request;
+        $this->viewbag['request'] = $request;
 
         // apply viewbag to view
         $view->apply($this->viewbag);

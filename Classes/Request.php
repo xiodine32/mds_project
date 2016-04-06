@@ -17,35 +17,20 @@ class Request
     private function __construct()
     {
         // start SESSION
+        $lifetime = 180;
+        session_cache_expire($lifetime);
+        session_cache_limiter("private");
+        session_set_cookie_params($lifetime, "/mds/", null, null, true);
+        session_name("RAT");
         session_start();
+        setcookie(session_name(), session_id(), time() + $lifetime, "/mds/", null, null, true);
 
-        $this->get = $this->curate($_GET);
-        $this->post = $this->curate($_POST);
-        $this->cookie = $_COOKIE;
-        $this->server = $_SERVER;
+        $this->get = filter_input_array(INPUT_GET);
+        $this->post = filter_input_array(INPUT_POST);
+        $this->cookie = filter_input_array(INPUT_COOKIE);
+        $this->server = filter_input_array(INPUT_SERVER);
         $this->globals = $GLOBALS;
     }
-
-    /**
-     * Curate an array with XSS injection proofing.
-     * @param $item mixed
-     * @return mixed
-     */
-    private function curate($item)
-    {
-        if (is_array($item)) {
-            foreach ($item as $key => $value) {
-                $item[$key] = $this->curate($value);
-            }
-            return $item;
-        }
-
-        // should be a string
-        if (!is_callable($item))
-            return htmlspecialchars($item);
-        return $item;
-    }
-
     public static function getInstance()
     {
         static $singleton = null;
@@ -58,11 +43,11 @@ class Request
     /**
      * Get Session Key.
      * @param string $key
-     * @return null|mixed
+     * @return mixed the filtered data, or <b>NULL</b> if the filter fails.
      */
     public function getSession($key)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        return isset($_SESSION[$key]) ? filter_var($_SESSION[$key]) : null;
     }
 
     /**
@@ -72,7 +57,7 @@ class Request
      */
     public function setSession($key, $value)
     {
-        $_SESSION[$key] = $value;
+        $_SESSION[$key] = filter_var($value);
     }
 
     /**
@@ -82,5 +67,10 @@ class Request
     public function delSession($key)
     {
         unset($_SESSION[$key]);
+    }
+
+    public function lockSession()
+    {
+        session_write_close();
     }
 }
