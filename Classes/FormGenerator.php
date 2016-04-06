@@ -35,12 +35,16 @@ class FormGenerator
 
 
     /**
-     * @param string $inputType
-     * @param string $inputID
-     * @param string $inputText
-     * @param string $inputErrorText
-     * @param boolean|string $requiredType
-     * @param array [$options]
+     * @param string $inputType Input type.
+     * @param string $inputID ID and Name (see options) text.
+     * @param string $inputText Placeholder text.
+     * @param string $inputErrorText Error text.
+     * @param boolean|string $requiredType <b>TRUE</b> if input is required, <b>"TEXT"</b> if input is required and pattern requested, <b>FALSE</b> otherwise.
+     * @param array [$options] can be:
+     * <ul>
+     * <li>'options' => [] ... for selects</li>
+     * <li>name => "something" for different name</li>
+     * </ul>
      */
     public function addInput($inputType, $inputID, $inputText, $inputErrorText, $requiredType, $options = [])
     {
@@ -73,13 +77,22 @@ class FormGenerator
     }
 
     /**
-     * @param string $inputType
-     * @param string $inputID
-     * @param string $inputText
-     * @param array $options
-     * @param string $translatedRequired
-     * @param string $inputClass
+     * Constructs the input, depending on $inputType.
+     * @param string $inputType Input type.
+     * @param string $inputID ID and Name (see options) text.
+     * @param string $inputText Placeholder text.
+     * @param $options array can be:
+     * <ul>
+     * <li>'options' => [] ... for selects</li>
+     * <li>name => "something" for different name</li>
+     * </ul>
+     * @param string $translatedRequired Required & pattern translated to attribute text.
+     * @param $inputClass string Input classes.
      * @return string
+     * <ul>
+     * <li>'options' => [] ... for selects</li>
+     * <li>name => "something" for different name</li>
+     * </ul>
      */
     private function constructInput($inputType, $inputID, $inputText, $options, $translatedRequired, $inputClass)
     {
@@ -109,8 +122,9 @@ class FormGenerator
     }
 
     /**
-     * @param boolean|string $requiredType
-     * @return string
+     * Constructs required attribute for the given parameter.
+     * @param boolean|string $requiredType <b>TRUE</b> if input is required, <b>"TEXT"</b> if input is required and pattern requested, <b>FALSE</b> otherwise.
+     * @return string required attribute for HTML dom
      */
     private function constructRequireAttribute($requiredType)
     {
@@ -128,8 +142,9 @@ class FormGenerator
     }
 
     /**
-     * @param string $classList
-     * @param string $buttonText
+     * Add a submit button.
+     * @param string $classList Button class list.
+     * @param string $buttonText Button text.
      */
     public function addSubmit($classList, $buttonText)
     {
@@ -146,7 +161,8 @@ class FormGenerator
     }
 
     /**
-     * @return string
+     * Generate the form.
+     * @return string Generated HTML for form.
      */
     public function generate()
     {
