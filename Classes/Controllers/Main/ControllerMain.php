@@ -21,17 +21,21 @@ abstract class ControllerMain extends \Controller
      */
     protected $employee;
 
+
+    public function __construct()
+    {
+        parent::__construct();
+        // try to read employee from session
+    }
+
     /**
      * Assures employee exists (otherwise, redirects him) and calls main controller for a view.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    public function call($get, $post, $files)
+    public function call($request)
     {
-        // try to read employee from session
-        $this->employee = ModelEmployee::fromSession();
+        $this->employee = ModelEmployee::fromSession($request);
 
         // if employee is gay or homeless
         if ($this->employee === false) {
@@ -43,15 +47,13 @@ abstract class ControllerMain extends \Controller
         //
         $this->viewbag['employee'] = $this->employee;
 
-        return $this->mainCall($get, $post, $files);
+        return $this->mainCall($request);
     }
 
     /**
      * Calls the controller to return a view, with employee assured to exist.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    protected abstract function mainCall($get, $post, $files);
+    protected abstract function mainCall($request);
 }

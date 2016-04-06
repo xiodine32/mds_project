@@ -1,3 +1,4 @@
+/*globals $:false */
 /**
  * Created by rares.neagu on 05/04/16.
  */

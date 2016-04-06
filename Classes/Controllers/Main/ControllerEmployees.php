@@ -13,15 +13,13 @@ class ControllerEmployees extends ControllerMain
 
     /**
      * Calls the controller to return a view, with employee assured to exist.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    protected function mainCall($get, $post, $files)
+    protected function mainCall($request)
     {
-        if ($this->is($post, "username")) {
-            return $this->tryRegister($post);
+        if ($this->has($request->post, "username")) {
+            return $this->tryRegister($request->post);
         }
         return new \View();
     }
@@ -32,19 +30,19 @@ class ControllerEmployees extends ControllerMain
             $this->viewbag['error'] = 'Error validating input';
             return new \View();
         }
-        $m = new ModelEmployee();
-        $m->account = $post['username'];
-        $m->firstName = $post['firstName'];
-        $m->middleInitial = $post['middleInitial'] ?: null;
-        $m->lastName = $post['lastName'];
-        $m->title = $post['title'];
-        $m->cnp = $post['cnp'];
-        $m->salary = $post['salary'];
-        $m->priorSalary = $post['priorSalary'];
-        $m->hireDate = $post['hireDate'];
-        $m->administrator = 0;
-        $m->setPassword($post['password']);
-        if ($m->insert()) {
+        $employee = new ModelEmployee();
+        $employee->account = $post['username'];
+        $employee->firstName = $post['firstName'];
+        $employee->middleInitial = $post['middleInitial'] ?: null;
+        $employee->lastName = $post['lastName'];
+        $employee->title = $post['title'];
+        $employee->cnp = $post['cnp'];
+        $employee->salary = $post['salary'];
+        $employee->priorSalary = $post['priorSalary'];
+        $employee->hireDate = $post['hireDate'];
+        $employee->administrator = 0;
+        $employee->setPassword($post['password']);
+        if ($employee->insert()) {
             $this->viewbag['success'] = 'User successfully inserted!';
             return new \View();
         }

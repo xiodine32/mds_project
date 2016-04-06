@@ -10,6 +10,7 @@
 abstract class Controller
 {
     protected $viewbag;
+    private $request;
 
     /**
      * Controller constructor.
@@ -17,6 +18,7 @@ abstract class Controller
     public function __construct()
     {
         $this->viewbag = [];
+        $this->request = new Request($_GET, $_POST, $_COOKIE, $_SERVER);
     }
 
     /**
@@ -24,61 +26,26 @@ abstract class Controller
      */
     public function run()
     {
-        // curate
-        $_GET = $this->curate($_GET);
-        $_POST = $this->curate($_POST);
-        $_FILES = $this->curate($_FILES);
-
         // call controller to get view
-        $view = $this->call($_GET, $_POST, $_FILES);
+        $view = $this->call($this->request);
 
         // set view name
         $view->setImplicitViewName(get_called_class());
 
+        // set viewbag request
+        $this->viewbag['request'] = $this->request;
+
         // apply viewbag to view
         $view->apply($this->viewbag);
-//        require $name;
-    }
 
-    /**
-     * Curate an array with XSS injection proofing.
-     * @param $item mixed
-     * @return mixed
-     */
-    private function curate($item)
-    {
-        if (is_array($item)) {
-            foreach ($item as $key => $value) {
-                $item[$key] = $this->curate($value);
-            }
-            return $item;
-        }
-
-        // should be a string
-        if (!is_callable($item))
-            return htmlspecialchars($item);
-        return $item;
     }
 
     /**
      * Calls the controller to return a view.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
-     * @return \View The View to be displayed.
+     * @param Request $request
+     * @return View The View to be displayed.
      */
-    public abstract function call($get, $post, $files);
-
-    /**
-     * A GET element exists
-     * @param string $key Key of GET element
-     * @param mixed|null [$value] Value of get element. If null, only existance is checked.
-     * @return bool True if exists and (true if value is not null and equal to requested value or true if value is null)
-     */
-    protected function isGet($key, $value = null)
-    {
-        return $this->is($_GET, $key, $value);
-    }
+    public abstract function call($request);
 
     /**
      * An element exists.
@@ -87,20 +54,8 @@ abstract class Controller
      * @param mixed|null [$value] Value of get element. If null, only existance is checked.
      * @return bool True if exists and (true if value is not null and equal to requested value or true if value is null)
      */
-    protected function is($array, $key, $value = null)
+    protected function has($array, $key, $value = null)
     {
         return isset($array[$key]) && (($value !== null && $array[$key] === $value) || $value === null);
     }
-
-    /**
-     * A POST element exists
-     * @param string $key Key of POST element
-     * @param mixed|null [$value] Value of get element. If null, only existance is checked.
-     * @return bool True if exists and (true if value is not null and equal to requested value or true if value is null)
-     */
-    protected function isPost($key, $value = null)
-    {
-        return $this->is($_POST, $key, $value);
-    }
-
 }

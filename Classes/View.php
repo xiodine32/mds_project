@@ -27,19 +27,6 @@ class View
         $this->name = $name;
         $this->partial = $isPartial;
 
-        // if partial is null, decide for myself
-        if ($this->partial === null) {
-
-            // if ajax, it's partial
-            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'
-            )
-                $this->partial = true;
-            else
-                $this->partial = false;
-        }
-
-
     }
 
     /**
@@ -75,10 +62,10 @@ class View
 
         // explode namespace (and thus path)
         $spaced = explode("\\", trim($name, "\\"));
-        $n = count($spaced);
+        $count = count($spaced);
 
         // remove "Controller" from the name of the controller (eg: ControllerIndex -> Index)
-        $spaced[$n - 1] = substr($spaced[$n - 1], strlen("Controller"));
+        $spaced[$count - 1] = substr($spaced[$count - 1], strlen("Controller"));
 
         // transform each folder name to lowercase
         foreach ($spaced as $key => $value) {
@@ -87,7 +74,7 @@ class View
 
         // if not default view, skip the naming convention of the required controller.
         if ($skipName)
-            $spaced[$n - 1] = $this->name;
+            $spaced[$count - 1] = $this->name;
 
         // name contains path and the file name
         $this->path = __DIR__ . "/Views/" . implode("/", array_slice($spaced, 0, -1));
@@ -100,6 +87,17 @@ class View
      */
     public function apply($viewbag)
     {
+
+        // if partial is null, decide for myself
+        if ($this->partial === null) {
+
+            /**@var Request $request */
+            $request = $viewbag['request'];
+
+            // if ajax, it's partial
+            $this->partial = !empty($request->server['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($request->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        }
 
         // set the viewbag
         $this->viewbag = $viewbag;
@@ -122,18 +120,19 @@ class View
 
             // call the view
             $this->continueRun();
-        } else {
-            // if partial file exists, display it.
-            if (is_file($this->name)) {
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $viewbag = $this->viewbag;
-                /** @noinspection PhpIncludeInspection */
-                require $this->name;
-            } else {
-                echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
-            }
+            return;
         }
 
+        // if partial file exists, display it.
+        if (is_file($this->name)) {
+            /** @noinspection PhpUnusedLocalVariableInspection */
+            $viewbag = $this->viewbag;
+            /** @noinspection PhpIncludeInspection */
+            require $this->name;
+            return;
+        }
+
+        echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
     }
 
     /**
@@ -211,8 +210,9 @@ class View
             $viewbag = $this->viewbag;
             /** @noinspection PhpIncludeInspection */
             require $item;
-        } else {
-            echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
+            return;
         }
+
+        echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
     }
 }

@@ -3,8 +3,6 @@
  * Created at: 29/03/16 12:30
  */
 
-// start SESSION
-session_start();
 
 // show errors if they exist
 ini_set("display_errors", 1);

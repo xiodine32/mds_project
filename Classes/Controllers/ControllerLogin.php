@@ -14,27 +14,30 @@ use Models\ModelEmployee;
  */
 class ControllerLogin extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Calls the controller
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    public function call($get, $post, $files)
+    public function call($request)
     {
 
         // if user already logged in, redirect to main content
-        if (ModelEmployee::fromSession() !== false)
+        $employee = ModelEmployee::fromSession($request);
+        if ($employee !== false)
             return new \Redirect("/main/");
 
         // set title
         $this->viewbag["title"] = "Login";
 
         // if login request, try to login user
-        if (!empty($post['username'])) {
-            return $this->tryLogin($post['username'], $post['password']);
+        if (!empty($request->post['username'])) {
+            return $this->tryLogin($request->post['username'], $request->post['password'], $request);
         }
 
         // display standard content
@@ -45,9 +48,10 @@ class ControllerLogin extends Controller
      * Try to login user.
      * @param $username string Username.
      * @param $password string Password.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    private function tryLogin($username, $password)
+    private function tryLogin($username, $password, $request)
     {
         // Cheeky bastard skips javascript validation?
         if (empty($username) || empty($password)) {
@@ -64,7 +68,7 @@ class ControllerLogin extends Controller
         }
 
         // try to login
-        if (!$user->tryLogin($password)) {
+        if (!$user->tryLogin($password, $request)) {
             $this->viewbag['error'] = 'Wrong username / password';
             return new \View();
         }

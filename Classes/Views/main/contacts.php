@@ -8,7 +8,7 @@ $success = isset($viewbag['success']);
 
 $formGenerator = new FormGenerator();
 $formGenerator->title = "Register new contact";
-$formGenerator->id = "addContact";
+$formGenerator->formID = "addContact";
 $formGenerator->ajax = $viewbag['partial'];
 $formGenerator->action = "{$viewbag['root']}main/contacts";
 $formGenerator->show = $viewbag['employee']->administrator;

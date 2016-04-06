@@ -13,13 +13,11 @@ namespace Controllers\Main;
 class ControllerIndex extends ControllerMain
 {
     /**
-     * Displays simple information to the Employee.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * Calls the controller to return a view, with employee assured to exist.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    protected function mainCall($get, $post, $files)
+    protected function mainCall($request)
     {
         $this->viewbag['title'] = 'Main Page';
 

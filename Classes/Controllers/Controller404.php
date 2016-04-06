@@ -15,12 +15,10 @@ class Controller404 extends \Controller
 
     /**
      * Displays 404.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    public function call($get, $post, $files)
+    public function call($request)
     {
         $this->viewbag['title'] = '404';
         return new \View();

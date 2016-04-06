@@ -7,7 +7,7 @@ class FormGenerator
 {
 
     public $title;
-    public $id;
+    public $formID;
 
 
     public $errorMessage;
@@ -53,12 +53,8 @@ class FormGenerator
         } elseif ($requiredType !== true) {
             $translatedRequired .= " pattern=\"{$requiredType}\"";
         }
-        $inputTypeTextValue = '';
-        if (isset($_POST[$inputID]))
-            $inputTypeTextValue = "value=\"{$_POST[$inputID]}\"";
-
         $inputTypeText = "<input type=\"text\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\" {$inputTypeTextValue}>";
+                        {$translatedRequired} class=\"{$inputClass}\">";
         if ($inputType === 'select') {
             $theOptions = isset($options['options']) ? $options['options'] : [];
             $optionsText = '<option value="">--- NONE ---</option>';
@@ -123,7 +119,7 @@ class FormGenerator
             $errorRole = "role=\"alert\"";
         }
 
-        return "<section id=\"{$this->id}\">
+        return "<section id=\"{$this->formID}\">
         <h3 class=\"text-center\">Register new contact</h3>
         {$successText}
         <form action=\"{$this->action}\" method=\"post\" data-abide novalidate>

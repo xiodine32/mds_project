@@ -61,25 +61,25 @@ class Database
         try {
 
             // prepare statement.
-            $e = $this->dbh->prepare($string);
+            $prepare = $this->dbh->prepare($string);
 
             // execute query
-            $value = $e->execute($array);
+            $value = $prepare->execute($array);
 
             // if should not fetch anything, return value.
             if ($fetchType == Database::FETCH_NONE) {
                 return $value;
                 // if fetching one item, fetch (or return false).
             } else if ($fetchType == Database::FETCH_ONE) {
-                return $value ? $e->fetch() : false;
+                return $value ? $prepare->fetch() : false;
             }
 
             // fetching multiple
-            return $value ? $e->fetchAll() : false;
-        } catch (Exception $e) {
+            return $value ? $prepare->fetchAll() : false;
+        } catch (Exception $prepare) {
 
             // on exception, set last error.
-            $this->lastError = $e;
+            $this->lastError = $prepare;
 
             return false;
         }

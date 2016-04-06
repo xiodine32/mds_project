@@ -15,36 +15,38 @@ class ModelEmployee extends Generated\ModelEmployee implements \ISessionable
 {
     /**
      * Reads the model from session.
+     * @param \Request $request
      * @return false|ModelEmployee
      */
-    static function fromSession()
+    static function fromSession($request)
     {
-        if (!isset($_SESSION['employee']))
+        if ($request->getSession('employee') === null)
             return false;
-        return unserialize($_SESSION['employee']);
+        return unserialize($request->getSession('employee'));
     }
 
     /**
      * Removes the item from session.
-     * @param $item \ISessionable
+     * @param \Request $request
      */
-    static function unsetSession($item)
+    static function unsetSession($request)
     {
-        unset($_SESSION['employee']);
+        $request->delSession('employee');
     }
 
     /**
      * Tries to login Employee with requested password.
      * @param string $password
+     * @param \Request $request
      * @return bool True if Employee logged in successfully.
      */
-    public function tryLogin($password)
+    public function tryLogin($password, $request)
     {
         // if password is not encrypted (migration tool), transform it into bcrypt password and update model.
         if ($this->password === $password) {
             $this->password = password_hash($this->password, PASSWORD_BCRYPT);
             self::update();
-            self::toSession($this);
+            self::toSession($this, $request);
             return true;
         }
 
@@ -54,7 +56,7 @@ class ModelEmployee extends Generated\ModelEmployee implements \ISessionable
         }
 
         // save to session
-        self::toSession($this);
+        self::toSession($this, $request);
 
         return true;
     }
@@ -62,10 +64,11 @@ class ModelEmployee extends Generated\ModelEmployee implements \ISessionable
     /**
      * Saves the model to session.
      * @param \ISessionable $item
+     * @param \Request $request
      */
-    static function toSession($item)
+    static function toSession($item, $request)
     {
-        $_SESSION['employee'] = serialize($item);
+        $request->setSession('employee', serialize($item));
     }
 
 

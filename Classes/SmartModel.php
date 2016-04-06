@@ -118,45 +118,10 @@ abstract class SmartModel
 
         $prepared[] = $this->child->$primaryKey;
 
-        $selectsCurated = [];
-        $preparedCurated = [];
-
 //        echo "<pre>";var_dump("before", $prepared);echo "</pre>";
 
         // if was selected, do a diff.
-        if (count($this->oldDatabaseTable) != count($keys) + 1) {
-
-            $selectsCurated = $selects;
-            $preparedCurated = $prepared;
-
-        } else {
-
-            $old = array_values($this->oldDatabaseTable);
-            $oldKeys = array_keys($this->oldDatabaseTable);
-            $n = count($old);
-
-            for ($i = 0; $i < $n; $i++) {
-
-                // primary key is first, so wrap backwards.
-                $left = $prepared[($i + $n - 1) % $n];
-                $right = $old[$i];
-
-                // strict type casting is NOT USED (FOR GOOD REASONS!)
-                if ($left != $right) {
-
-                    $item = $oldKeys[$i];
-                    $this->oldDatabaseTable[$item] = $left;
-
-                    $selectsCurated[] = "`{$item}` = ?";
-
-
-                    if ($this->child->$item === null)
-                        $preparedCurated[] = null;
-                    else
-                        $preparedCurated[] = $this->child->$item;
-                }
-            }
-        }
+        list($selectsCurated, $preparedCurated) = $this->updateDiff($keys, $selects, $prepared);
 
         if (!count($preparedCurated))
             return true;
@@ -171,6 +136,54 @@ abstract class SmartModel
 //        echo "<pre>";var_dump($preparedCurated);echo "</pre>";
 //        die();
         return Database::instance()->query($stmt, $preparedCurated, \Database::FETCH_NONE) !== false;
+    }
+
+    /**
+     * Updates the selects and prepares depending on what's changed.
+     * @param array $keys
+     * @param array $selects
+     * @param array $prepared
+     * @return array
+     */
+    private function updateDiff($keys, $selects, $prepared)
+    {
+        $selectsCurated = [];
+        $preparedCurated = [];
+
+        if (count($this->oldDatabaseTable) != count($keys) + 1) {
+
+            $selectsCurated = $selects;
+            $preparedCurated = $prepared;
+            return [$selectsCurated, $preparedCurated];
+
+        }
+
+        $old = array_values($this->oldDatabaseTable);
+        $oldKeys = array_keys($this->oldDatabaseTable);
+        $count = count($old);
+
+        for ($i = 0; $i < $count; $i++) {
+
+            // primary key is first, so wrap backwards.
+            $left = $prepared[($i + $count - 1) % $count];
+            $right = $old[$i];
+
+            // strict type casting is NOT USED (FOR GOOD REASONS!)
+            if ($left != $right) {
+
+                $item = $oldKeys[$i];
+                $this->oldDatabaseTable[$item] = $left;
+
+                $selectsCurated[] = "`{$item}` = ?";
+
+
+                if ($this->child->$item === null)
+                    $preparedCurated[] = null;
+                else
+                    $preparedCurated[] = $this->child->$item;
+            }
+        }
+        return [$selectsCurated, $preparedCurated];
     }
 
     /**

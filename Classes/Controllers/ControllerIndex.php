@@ -15,12 +15,10 @@ class ControllerIndex extends Controller {
 
     /**
      * Redirects user to login page as we don't have a landing page (yet).
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    public function call($get, $post, $files)
+    public function call($request)
     {
         return new \Redirect("login");
     }

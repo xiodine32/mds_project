@@ -10,7 +10,6 @@ session_start();
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
 
-
 // autoload classes
 
 spl_autoload_register(function ($className) {
@@ -34,8 +33,10 @@ spl_autoload_register(function ($className) {
     }
 });
 
+$database = Database::instance();
+
 if (!empty($_GET['classFor'])) {
-    $code = classFor($_GET['classFor']);
+    $code = classFor($database, $_GET['classFor']);
     echo "<a href='?overwrite={$_GET['classFor']}' onclick='return confirm(\"You sure?\");'>Overwrite</a><pre><textarea onclick='this.select();' style='font-size: 0.5em;' rows='50'>{$code}</textarea></pre>";
     die();
 }
@@ -43,7 +44,7 @@ if (!empty($_GET['classFor'])) {
 $modelPath = __DIR__ . "/Classes/Models/Generated/";
 
 if (!empty($_GET['overwrite'])) {
-    $code = classFor($_GET['overwrite']);
+    $code = classFor($database, $_GET['overwrite']);
     $singleName = substr($_GET['overwrite'], 0, -1);
     $modelName = "GModel{$singleName}";
     $filePath = $modelPath . "{$modelName}.php";
@@ -52,7 +53,7 @@ if (!empty($_GET['overwrite'])) {
     die();
 }
 if (!empty($_GET['overwriteall'])) {
-    foreach (getTables() as $table) {
+    foreach (getTables($database) as $table) {
         $singleName = substr($table, 0, -1);
         $modelName = "Model{$singleName}";
         $code = classFor($table, $modelName);
@@ -102,12 +103,12 @@ if (!empty($_GET['overwriteall'])) {
             <?php
             closedir($handle);
         else: ?>
-            <?php run($_POST['run']); ?>
+            <?php run($database, $_POST['run']); ?>
         <?php endif ?>
         <hr>
         <h1>Tables</h1>
         <?php
-        $arr = getTables();
+        $arr = getTables($database);
         ?>
         <ul class="tabs" data-tabs id="table-datas">
             <?php foreach ($arr as $item): ?>
@@ -117,7 +118,7 @@ if (!empty($_GET['overwriteall'])) {
         <div class="tabs-content" data-tabs-content='table-datas'>
             <?php
             foreach ($arr as $item) {
-                describe($item);
+                describe($database, $item);
             }
             ?>
         </div>
@@ -125,7 +126,7 @@ if (!empty($_GET['overwriteall'])) {
 </div>
 <script src="content/js/vendor/jquery.min.js"></script>
 <script src="content/js/vendor/what-input.min.js"></script>
-<script src="content/js/foundation.min.js"></script>
+<script src="content/js/vendor/foundation.min.js"></script>
 <script src="content/js/app.js"></script>
 <script>$("#table-datas").find("li > a").first().click();</script>
 </body>
@@ -135,12 +136,12 @@ if (!empty($_GET['overwriteall'])) {
 
 /**
  * Echo a table
+ * @param Database $database
  * @param $tableName string Table Name.
  */
-function describe($tableName)
+function describe($database, $tableName)
 {
-    $db = Database::instance();
-    $table = $db->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
+    $table = $database->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
 
     echo "<div class='tabs-panel ' id='" . strtolower($tableName) . "'>";
     echo "<table style='width: 100%;overflow: hidden;table-layout: fixed;font-size: 0.5em;' class='hover stack'>";
@@ -152,7 +153,7 @@ function describe($tableName)
     echo "</tr>";
     echo "</thead>";
     echo "<tbody>";
-    $items = $db->query("SELECT * FROM {$tableName}", [], Database::FETCH_ALL);
+    $items = $database->query("SELECT * FROM {$tableName}", [], Database::FETCH_ALL);
     foreach ($items as $item) {
         echo "<tr>";
         foreach ($item as $value) {
@@ -168,12 +169,12 @@ function describe($tableName)
 
 /**
  * Run a SQL file.
- * @param $fileName string File name.
+ * @param Database $database
+ * @param string $fileName File name.
  */
-function run($fileName)
+function run($database, $fileName)
 {
     $query = file_get_contents(__DIR__ . "/migrations/" . $fileName);
-    $database = Database::instance();
 
     foreach (explode(";", trim($query, "; \t\n\r\0\x0B")) as $item) {
         echo "<pre>" . print_r($item, true) . "</pre>";
@@ -184,10 +185,15 @@ function run($fileName)
     }
 }
 
-function classFor($tableName, $modelName = null)
+/**
+ * @param Database $database
+ * @param string $tableName
+ * @param null|string $modelName
+ * @return string
+ */
+function classFor($database, $tableName, $modelName = null)
 {
-    $db = Database::instance();
-    $table = $db->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
+    $table = $database->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
     $fields = [];
     foreach ($table as $item) {
         $fieldName = $item['Type'];
@@ -243,10 +249,14 @@ class {$modelName} extends SmartModel
     return $code;
 }
 
-function getTables()
+/**
+ * @param Database $database
+ * @return array
+ */
+function getTables($database)
 {
     $arr = [];
-    foreach (Database::instance()->query("SHOW TABLES;", [], Database::FETCH_ALL) as $item) {
+    foreach ($database->query("SHOW TABLES;", [], Database::FETCH_ALL) as $item) {
         $arr[] = $item['Tables_in_x28xioro_mds'];
     }
     return $arr;

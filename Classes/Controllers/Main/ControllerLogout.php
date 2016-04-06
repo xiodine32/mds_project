@@ -15,15 +15,13 @@ use Models\ModelEmployee;
 class ControllerLogout extends ControllerMain
 {
     /**
-     * Logs out the employee and redirects to root page.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * Calls the controller to return a view, with employee assured to exist.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    protected function mainCall($get, $post, $files)
+    protected function mainCall($request)
     {
-        ModelEmployee::unsetSession($this->employee);
+        ModelEmployee::unsetSession($request);
         return new \Redirect("/");
     }
 }

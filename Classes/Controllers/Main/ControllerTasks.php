@@ -13,15 +13,13 @@ class ControllerTasks extends ControllerMain
 
     /**
      * Calls the controller to return a view, with employee assured to exist.
-     * @param array $get Curated GET.
-     * @param array $post Curated POST.
-     * @param array $files Curated FILES.
+     * @param \Request $request
      * @return \View The View to be displayed.
      */
-    protected function mainCall($get, $post, $files)
+    protected function mainCall($request)
     {
-        if ($this->is($post, "task") && $this->is($post, "difficulty")) {
-            return $this->tryInsertNewPost($post['task'], $post['difficulty']);
+        if ($this->has($request->post, "task") && $this->has($request->post, "difficulty")) {
+            return $this->tryInsertNewPost($request->post['task'], $request->post['difficulty']);
         }
         $this->viewbag['tasks'] = (new ModelTask())->selectAll();
         return new \View();
@@ -38,11 +36,9 @@ class ControllerTasks extends ControllerMain
         $model = new ModelTask();
         $model->taskDescription = $task;
         $model->difficulty = intval($difficulty);
-        if ($model->insert()) {
-
-        } else {
+        if (!$model->insert()) {
             echo "Failed to insert: " . \Database::instance()->lastError();
-            die();
+            return new \View();
         }
         return new \Redirect("/main/calendar");
     }
