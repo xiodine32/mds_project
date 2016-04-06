@@ -14,5 +14,5 @@ $("[data-equal-size]").each(function () {
 });
 
 //noinspection JSUnresolvedVariable
-Foundation.Abide.defaults.patterns['cnp'] = /^[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/;
+Foundation.Abide.defaults.patterns["cnp"] = /^[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/;
 $(document).foundation();

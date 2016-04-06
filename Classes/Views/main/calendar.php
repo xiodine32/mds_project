@@ -25,13 +25,13 @@ $user = $viewbag['employee'];
 
 <?php
 
-function showItem($i)
+function showItem($weekDate)
 {
     $today = date("W");
     $callout = 'callout';
-    if ($i == $today)
+    if ($weekDate == $today)
         $callout .= ' success';
-    elseif ($i > $today)
+    elseif ($weekDate > $today)
         $callout .= ' secondary';
     else
         $callout .= ' warning';
@@ -48,7 +48,7 @@ function showItem($i)
         <div class="columns small-1" data-equal-size>
             <small>Duminica</small>
         </div>
-        <div class="label label-bottom"><?= $i ?></div>
+        <div class="label label-bottom"><?= $weekDate ?></div>
     </div>
     <?php
 }

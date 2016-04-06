@@ -18,7 +18,7 @@ abstract class Controller
     public function __construct()
     {
         $this->viewbag = [];
-        $this->request = new Request($_GET, $_POST, $_COOKIE, $_SERVER);
+        $this->request = Request::getInstance();
     }
 
     /**

@@ -5,6 +5,6 @@
 
 function QuickAdd(target, selector) {
     var $modal = $("#quickAdd");
-    $modal.find('#quickAdd-content').load(target + " " + selector);
-    $modal.foundation('open');
+    $modal.find("#quickAdd-content").load(target + " " + selector);
+    $modal.foundation("open");
 }

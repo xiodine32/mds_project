@@ -9,23 +9,21 @@ class Request
     public $post;
     public $cookie;
     public $server;
+    public $globals;
 
     /**
      * Request constructor.
-     * @param array $get
-     * @param array $post
-     * @param array $cookie
-     * @param array $server
      */
-    public function __construct($get, $post, $cookie, $server)
+    private function __construct()
     {
         // start SESSION
         session_start();
 
-        $this->get = $this->curate($get);
-        $this->post = $this->curate($post);
-        $this->cookie = $cookie;
-        $this->server = $server;
+        $this->get = $this->curate($_GET);
+        $this->post = $this->curate($_POST);
+        $this->cookie = $_COOKIE;
+        $this->server = $_SERVER;
+        $this->globals = $GLOBALS;
     }
 
     /**
@@ -46,6 +44,15 @@ class Request
         if (!is_callable($item))
             return htmlspecialchars($item);
         return $item;
+    }
+
+    public static function getInstance()
+    {
+        static $singleton = null;
+        if ($singleton === null)
+            $singleton = new Request();
+
+        return $singleton;
     }
 
     /**
