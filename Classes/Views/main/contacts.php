@@ -20,8 +20,8 @@ $formGenerator->errorMessage = isset($viewbag['error']) ? $viewbag['error'] : "T
 
 $formGenerator->addInput("text", "title", "Project Title", "Error here, please fix!", true);
 
-$formGenerator->addInput("text", "startDate", "Start Date", "Error here, please fix!", "date");
-$formGenerator->addInput("text", "endDate", "End Date", "Error here, please fix!", "date");
+$formGenerator->addInput("date", "contactStartDate", "Start Date", "Error here, please fix!", "date", ["name" => "startDate"]);
+$formGenerator->addInput("date", "contactEndDate", "End Date", "Error here, please fix!", "date", ["name" => "endDate"]);
 
 $formGenerator->addInput("text", "contractNumber", "Contract Number", "Error here, please fix!", true);
 $formGenerator->addInput("text", "pjDescription", "PJ Description", "Error here, please fix!", true);

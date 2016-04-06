@@ -4,7 +4,38 @@
  */
 
 function QuickAdd(target, selector) {
+    var onclose = function () {
+    };
+
+    $("body").append('<div class="reveal" id="quickAdd" data-reveal data-close-on-click="true" data-animation-in="fade-in"' +
+        ' data-animation-out="fade-out"' +
+        ' aria-labelledby="quickAdd-content" aria-hidden="true" role="dialog">' +
+        ' <div id="quickAdd-content"></div>' +
+        ' <button class="close-button" data-close aria-label="Close reveal" type="button" id="closeButton">' +
+        ' <span aria-hidden="true">&times;</span></button></div>');
+
+
     var $modal = $("#quickAdd");
-    $modal.find("#quickAdd-content").load(target + " " + selector);
-    $modal.foundation("open");
+
+    var popup = new Foundation.Reveal($modal);
+
+    $modal.bind('closed.zf.reveal', function () {
+        onclose();
+    });
+
+    var filename = target + " " + selector;
+    $modal.find("#quickAdd-content").load(filename, function () {
+
+        // open modal
+        popup.open();
+
+        // add datepicker
+        $modal.find('input[pattern=date]').datepicker({dateFormat: 'yy-mm-dd'});
+    });
+
+    return {
+        close: function (item) {
+            onclose = item;
+        }
+    }
 }

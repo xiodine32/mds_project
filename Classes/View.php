@@ -122,16 +122,7 @@ class View
             return;
         }
 
-        // if partial file exists, display it.
-        if (is_file($this->name)) {
-            /** @noinspection PhpUnusedLocalVariableInspection */
-            $viewbag = $this->viewbag;
-            /** @noinspection PhpIncludeInspection */
-            require $this->name;
-            return;
-        }
-
-        echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
+        $this->includeItem($this->name);
     }
 
     /**
@@ -202,6 +193,14 @@ class View
         if ($this->callIndex != count($this->layout) - 1)
             $item .= "_layout.php";
 
+        $this->includeItem($item);
+    }
+
+    /**
+     * @param $item string
+     */
+    protected function includeItem($item)
+    {
         // if exists, bind the viewbag and require file.
         if (is_file($item)) {
             /** @noinspection PhpUnusedLocalVariableInspection */

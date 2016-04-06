@@ -16,19 +16,28 @@ class Request
      */
     private function __construct()
     {
-        // start SESSION
-        $lifetime = 180;
-        session_cache_expire($lifetime);
-        session_cache_limiter("private");
-        session_set_cookie_params($lifetime, "/mds/", null, null, true);
-        session_name("RAT");
-        session_start();
-        setcookie(session_name(), session_id(), time() + $lifetime, "/mds/", null, null, true);
 
+        // lifetime in minutes, equals 2 hours.
+        $lifetime = 2 * 60;
+        session_cache_expire($lifetime);
+        session_cache_limiter("public");
+
+
+        session_set_cookie_params($lifetime * 60, "/mds/", null, null, true);
+        session_name("RAT");
+
+        session_start();
+
+        // update last time visited cookie
+        setcookie(session_name(), session_id(), time() + $lifetime * 60, "/mds/", null, null, true);
+
+        // filter variables
         $this->get = filter_input_array(INPUT_GET);
         $this->post = filter_input_array(INPUT_POST);
         $this->cookie = filter_input_array(INPUT_COOKIE);
         $this->server = filter_input_array(INPUT_SERVER);
+
+        // set globals
         $this->globals = $GLOBALS;
     }
     public static function getInstance()

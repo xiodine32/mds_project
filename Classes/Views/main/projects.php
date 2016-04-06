@@ -130,7 +130,8 @@ $success = isset($viewbag['success']);
                         <option value="">--- NONE ---</option>
                         <option value="somethign">--- NONE ---</option>
                     </select>
-                    <a href="#" onclick="return false;" id="addContact" class="button success small">Add Contact</a>
+                    <a href="#" onclick="return false;" id="addContactButton" class="button success small">Add
+                        Contact</a>
                     <span class="form-error">Error here, please fix!</span>
                 </div>
             </div>
@@ -147,22 +148,21 @@ $success = isset($viewbag['success']);
             </div>
         </form>
     <?php endif ?>
-    <div class="reveal" id="quickAdd" data-reveal data-close-on-click="true" data-animation-in="fade-in"
-         data-animation-out="fade-out">
-        <div id="quickAdd-content">
-
-        </div>
-        <button class="close-button" data-close aria-label="Close reveal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+    
 </section>
 <script src="<?= $viewbag['root'] ?>content/main/quickadd.js"></script>
 <script>
     (function () {
-        $('#addContact').click(function () {
-            new QuickAdd("<?=$viewbag['root']?>main/contacts", "#addContact");
-            //TODO: trigger refresh on contactID
+        $('#addContactButton').click(function () {
+            var $vi = $(this);
+            $vi.attr("disabled", true);
+            var quickAdd = new QuickAdd("<?=$viewbag['root']?>main/contacts", "#addContact");
+            quickAdd.close(function () {
+                $("#contactID").load("<?=$viewbag['root']?>main/contacts", {reloadcontactID: true}, function () {
+                    console.log('setting attr false');
+                    $vi.attr("disabled", false);
+                });
+            });
         });
     })();
 </script>

@@ -16,6 +16,12 @@ class ControllerContacts extends ControllerMain
      */
     protected function mainCall($request)
     {
+        if ($this->has($request->post, 'reloadcontactID')) {
+
+            return new \HTMLView("<select class=\"\" id=\"contactID\" required name=\"contactID\">
+                        <option value=\"secy\">--- secy ---</option>
+                    </select>");
+        }
         return new \View();
     }
 }

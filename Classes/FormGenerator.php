@@ -54,6 +54,10 @@ class FormGenerator
             $this->constructRequireAttribute($requiredType),
             $inputClass);
 
+        if ($requiredType === "date") {
+            $this->generatedScripts .= "<script>$(function() { $('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});});</script>\n";
+        }
+
         $this->generatedHTML .= "<!-- {$inputID} -->
 <div class=\"row\">
     <div class=\"small-3 columns\">
@@ -65,10 +69,6 @@ class FormGenerator
         <span class=\"form-error\">{$inputErrorText}</span>
     </div>
 </div>\n";
-
-        if ($requiredType === "date") {
-            $this->generatedScripts .= "<script>(function() { $('#{$inputID}').datepicker({inline:true, dateFormat: 'yy-mm-dd'});})();</script>\n";
-        }
 
     }
 
@@ -84,6 +84,10 @@ class FormGenerator
     private function constructInput($inputType, $inputID, $inputText, $options, $translatedRequired, $inputClass)
     {
 
+        $inputName = $inputID;
+        if (isset($options['name']))
+            $inputName = $options['name'];
+
         if ($inputType === 'select') {
 
             $theOptions = isset($options['options']) ? $options['options'] : [];
@@ -94,17 +98,13 @@ class FormGenerator
                 $optionsText .= "<option value='{$key}'>{$value}</option>\n";
             }
 
-            return "<select name=\"{$inputID}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
+            return "<select name=\"{$inputName}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
 {$optionsText}
 </select>";
         }
 
-        if ($inputType === 'date') {
-            return "<input type=\"date\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\">";
-        }
 
-        return "<input type=\"text\" name=\"{$inputID}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
+        return "<input type=\"text\" name=\"{$inputName}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
                         {$translatedRequired} class=\"{$inputClass}\">";
     }
 
@@ -150,7 +150,8 @@ class FormGenerator
      */
     public function generate()
     {
-
+        if ($this->ajax)
+            $this->generatedScripts = "";
         $successText = "";
         if ($this->success)
             $successText = "<div class=\"callout success\">{$this->successMessage}</div>";
