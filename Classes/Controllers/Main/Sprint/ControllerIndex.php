@@ -21,7 +21,6 @@ class ControllerIndex extends ControllerMain
      */
     protected function mainCall($request)
     {
-        // TODO: Implement mainCall() method.
         return new \HTMLView("<p> Nascut si crescut in PANTELIMON </p>");
     }
 }

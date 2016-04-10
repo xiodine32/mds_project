@@ -19,8 +19,8 @@ class Request
 
         // lifetime in minutes, equals 2 hours.
         $lifetime = 2 * 60;
-        session_cache_expire($lifetime);
-        session_cache_limiter("public");
+        session_cache_expire(0);
+        session_cache_limiter("no-cache");
 
 
         session_set_cookie_params($lifetime * 60, "/mds/", null, null, true);
