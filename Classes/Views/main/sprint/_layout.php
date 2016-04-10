@@ -7,3 +7,4 @@
  */
 if (!isset($viewbag) || !isset($this)) die();
 $this->continueRun();
+?>
