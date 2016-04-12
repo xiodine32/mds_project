@@ -23,11 +23,16 @@ class ContentView extends View
         $this->metadataType = $metadataType;
         $this->fileContent = $fileContent;
         $this->fileName = $fileName;
+
+        // always partial view.
         parent::__construct("", true);
     }
 
     protected function includeItem($item)
     {
+        if (substr($item, -5) !== "/.php") {
+            return;
+        }
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
         header("Content-Disposition: attachment; filename=\"{$this->fileName}\"");
@@ -36,6 +41,5 @@ class ContentView extends View
         header('Pragma: public');
         header('Content-Length: ' . strlen($this->fileContent));
         echo $this->fileContent;
-        die();
     }
 }

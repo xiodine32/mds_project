@@ -163,7 +163,15 @@ class FormGenerator
     public function generate()
     {
         if ($this->ajax)
-            $this->generatedScripts = "<script>$(function () { alert('ajax enabled'); });</script>";
+            $this->generatedScripts = '<script>$(function () {
+ var elemul = $("#' . $this->formID . '");
+ new Foundation.Abide(elemul,{});
+    elemul.submit(function () {
+        $(this).foundation(\'validateForm\');
+        console.log(\'WORKING\');
+        return false;
+    });
+ });</script>';
         $successText = "";
         if ($this->success)
             $successText = "<div class=\"callout success\">{$this->successMessage}</div>";
@@ -188,6 +196,18 @@ class FormGenerator
         </form>
 {$this->generatedScripts}
         </section>";
+    }
+
+    public function addCustomBegin()
+    {
+        ob_start();
+    }
+
+    public function addCustomEnd()
+    {
+        $content = ob_get_contents();
+        ob_end_clean();
+        $this->generatedHTML .= $content;
     }
 
 

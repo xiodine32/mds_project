@@ -23,7 +23,7 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
     <script src="<?= $viewbag['root'] ?>content/js/vendor/jquery-ui.min.js"></script>
 </head>
 <body>
-<div class="row">
+<div class="row expanded">
     <div class="large-12">
         <?php $this->continueRun(); ?>
     </div>

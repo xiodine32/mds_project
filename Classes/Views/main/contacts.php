@@ -18,22 +18,17 @@ $formGenerator->error = isset($viewbag['error']);
 $formGenerator->errorMessage = isset($viewbag['error']) ? $viewbag['error'] : "There are some errors in your form.";
 
 
-$formGenerator->addInput("text", "contactTitle", "title", "Project Title", "Error here, please fix!", true);
+$formGenerator->addInput("text", "contactName", "contactName", "Contact Name", "Please specify a name!", true);
+$formGenerator->addInput("text", "contactPhoneNumber", "phoneNumber", "Phone", "", false);
+$formGenerator->addInput("text", "contactFaxNumber", "faxNumber", "Fax", "", false);
+$formGenerator->addInput("text", "contactEmail", "email", "Email", "", false);
+$formGenerator->addInput("text", "contactAddress", "physicalAddress", "Physical Address", "", false);
 
-$formGenerator->addInput("date", "contactStartDate", "startDate", "Start Date", "Error here, please fix!", "date");
-$formGenerator->addInput("date", "contactEndDate", "endDate", "End Date", "Error here, please fix!", "date");
-
-$formGenerator->addInput("text", "contactContractNumber", "contractNumber", "Contract Number", "Error here, please fix!", true);
-$formGenerator->addInput("text", "contactPjDescription", "pjDescription", "PJ Description", "Error here, please fix!", true);
-
-$formGenerator->addInput("text", "contactBudget", "budget", "Budget", "Error here, please fix!", "number");
-
-$formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Department", "Error here, please fix!", false, ['options' => [
-    "test" => "Test"
-]]);
-
-$formGenerator->addSubmit("button", "New Project");
+$formGenerator->addSubmit("button", "Add");
+    
 
 ?>
     <h1 class="text-center">Contacts</h1>
-<?= $formGenerator->generate() ?>
+<?php if ($viewbag['employee']->administrator): ?>
+    <?= $formGenerator->generate() ?>
+<?php endif ?>
