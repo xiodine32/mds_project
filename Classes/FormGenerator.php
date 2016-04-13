@@ -163,15 +163,27 @@ class FormGenerator
     public function generate()
     {
         if ($this->ajax)
-            $this->generatedScripts = '<script>$(function () {
- var elemul = $("#' . $this->formID . '");
- new Foundation.Abide(elemul,{});
-    elemul.submit(function () {
-        $(this).foundation(\'validateForm\');
-        console.log(\'WORKING\');
-        return false;
+            $this->generatedScripts = '<script>
+    $(function () {
+        var elemul = $("#' . $this->formID . '").find("form");
+        new Foundation.Abide(elemul, {});
+        var calledOnce = false;
+        elemul.submit(function () {
+            $(this).foundation("validateForm");
+            return false;
+        });
+        elemul.on("formvalid.zf.abide", function () {
+            if (calledOnce) return;
+            calledOnce = true;
+            console.log("called");
+            var form = $(this).serialize();
+            $.post("' . $this->action . '", form, function () {
+                if (window.quickAdd)
+                    window.quickAdd.close();
+            });
+        });
     });
- });</script>';
+</script>';
         $successText = "";
         if ($this->success)
             $successText = "<div class=\"callout success\">{$this->successMessage}</div>";

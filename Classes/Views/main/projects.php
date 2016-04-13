@@ -5,7 +5,7 @@
 if (!isset($viewbag)) die();
 $errors = isset($viewbag['error']);
 $success = isset($viewbag['success']);
-
+$contacts = isset($viewbag['contacts']) ? $viewbag['contacts'] : [];
 $formGenerator = new FormGenerator();
 $formGenerator->title = "Register new project";
 $formGenerator->formID = "addProject";
@@ -32,10 +32,13 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
     "test" => "Test"
 ]]);
 
+if (empty($contacts))
+    $contacts = [];
+if (!is_array($contacts))
+    $contacts = [$contacts];
 
 
 ?>
-<!--TODO: add departments-->
 <h1 class="text-center">Projects</h1>
 <section id="addProject">
     <?php if ($viewbag['employee']->administrator): ?>
@@ -49,7 +52,9 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
                 <div class="small-9 columns">
                     <select class="<?= $errors ? ' is-invalid-input' : '' ?>" id="contactID" required name="contactID">
                         <option value="">--- NONE ---</option>
-                        <option value="somethign">--- NONE ---</option>
+                        <?php foreach ($contacts as $contact): /**@var $contact \Models\Generated\ModelContact */ ?>
+                            <option value="<?= $contact->contactID ?>"><?= $contact->contactName ?></option>
+                        <?php endforeach ?>
                     </select>
                     <a href="#" onclick="return false;" id="addContactButton" class="button success small">Add
                         Contact</a>
@@ -70,10 +75,11 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
             $vi.attr("disabled", true);
             var quickAdd = new QuickAdd("<?=$viewbag['root']?>main/contacts", "#addContact");
             quickAdd.close(function () {
-                $("#contactID").load("<?=$viewbag['root']?>main/contacts", {reloadcontactID: true}, function () {
-                    console.log('setting attr false');
-                    $vi.attr("disabled", false);
-                });
+                setTimeout(function () {
+                    $("#contactID").load("<?=$viewbag['root']?>main/contacts", {reloadcontactID: true}, function () {
+                        $vi.attr("disabled", false);
+                    });
+                }, 1000);
             });
         });
     })();

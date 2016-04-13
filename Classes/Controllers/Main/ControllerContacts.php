@@ -6,6 +6,10 @@
 namespace Controllers\Main;
 
 
+use Database;
+use Models\Generated\ModelContact;
+use SmartModel;
+
 class ControllerContacts extends ControllerMain
 {
 
@@ -18,10 +22,55 @@ class ControllerContacts extends ControllerMain
     {
         if ($this->has($request->post, 'reloadcontactID')) {
 
-            return new \HTMLView("<select class=\"\" id=\"contactID\" required name=\"contactID\">
-                        <option value=\"secy\">--- secy ---</option>
-                    </select>");
+            $factories = SmartModel::factoryFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+RIGHT JOIN Contacts USING (contactID)");
+
+            $options = ["<option value=\"\">--- NONE ---</option>"];
+            if (is_array($factories)) {
+                foreach ($factories as $item) {
+                    $options[] = "<option value=\"{$item->contactID}\">{$item->contactName}</option>";
+                }
+            }
+
+
+            return new \HTMLView('<select class="" id="contactID" required name="contactID">
+                        ' . join($options, "\n") . "</select>");
         }
+
+
+        if ($this->hasMany($request->post, ["contactName"])) {
+            return $this->tryAdd($request);
+        }
+
+        $this->viewbag['contacts'] = (new ModelContact())->selectAll();
+
+        return new \View();
+    }
+
+    /**
+     * @param $request \Request
+     * @return \View
+     *
+     */
+    private function tryAdd($request)
+    {
+        $keys = ["contactName", "phoneNumber", "faxNumber", "email", "physicalAddress"];
+
+        $this->assureMany($request->post, $keys, null);
+
+        $model = new ModelContact();
+
+        foreach ($keys as $key) {
+            $model->{$key} = $request->post[$key];
+        }
+
+//        echo "<pre>";var_dump($model);echo "</pre>";
+
+        if (!$model->insert())
+            $this->viewbag['error'] = Database::instance()->lastError();
+
+        $this->viewbag['contacts'] = (new ModelContact())->selectAll();
+
         return new \View();
     }
 }

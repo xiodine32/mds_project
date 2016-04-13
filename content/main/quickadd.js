@@ -21,6 +21,7 @@ function QuickAdd(target, selector) {
 
     //noinspection JSUnresolvedFunction
     var popup = new Foundation.Reveal($modal);
+    window.quickAdd = popup;
 
     $modal.bind("closed.zf.reveal", function () {
         onclose();
@@ -28,7 +29,8 @@ function QuickAdd(target, selector) {
 
     $modal.find("#quickAdd-content").load(target, function () {
         var $me = $(this);
-        $me.children($me.find(selector));
+        var $elem = $me.find(selector);
+        $me.empty().append($elem);
         // open modal
         popup.open();
 

@@ -32,3 +32,9 @@ $formGenerator->addSubmit("button", "Add");
 <?php if ($viewbag['employee']->administrator): ?>
     <?= $formGenerator->generate() ?>
 <?php endif ?>
+<div class="row">
+    <div class="columns large-12">
+        <hr>
+        <pre><?= join("</pre><hr><pre>", $this->viewbag['contacts']) ?></pre>
+    </div>
+</div>

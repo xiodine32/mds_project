@@ -6,6 +6,9 @@
 namespace Controllers\Main;
 
 
+use Database;
+use SmartModel;
+
 class ControllerProjects extends ControllerMain
 {
 
@@ -16,6 +19,14 @@ class ControllerProjects extends ControllerMain
      */
     protected function mainCall($request)
     {
+        if ($this->employee->administrator) {
+            $this->viewbag['contacts'] = SmartModel::factoryFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+RIGHT JOIN Contacts USING (contactID)");
+            $error = Database::instance()->lastError();
+            if ($error) {
+                var_dump($error);
+            }
+        }
         return new \View();
     }
 }

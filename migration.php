@@ -56,7 +56,7 @@ if (!empty($_GET['overwriteall'])) {
     foreach (getTables($database) as $table) {
         $singleName = substr($table, 0, -1);
         $modelName = "Model{$singleName}";
-        $code = classFor($table, $modelName);
+        $code = classFor($database, $table, $modelName);
         $filePath = $modelPath . "{$modelName}.php";
         file_put_contents($filePath, $code);
     }
@@ -195,6 +195,8 @@ function classFor($database, $tableName, $modelName = null)
 {
     $table = $database->query("DESCRIBE {$tableName}", [], Database::FETCH_ALL);
     $fields = [];
+    $copyPasteFields = [];
+    $copyPasteRequiredFields = [];
     foreach ($table as $item) {
         $fieldName = $item['Type'];
         if ($firstP = strpos($fieldName, "(")) {
@@ -205,14 +207,27 @@ function classFor($database, $tableName, $modelName = null)
         if (in_array($fieldName, ['bit']))
             $fieldName = 'int';
 
-        if ($item['Null'] === 'YES')
+        $required = true;
+
+        if ($item['Null'] === 'YES') {
+            $required = false;
             $fieldName .= "|null";
+        }
+
+        if (!$required) {
+            $copyPasteFields[] = $item['Field'];
+        } else {
+            $copyPasteRequiredFields[] = $item['Field'];
+        }
 
         $fields[] = "    /**
      * @var {$fieldName} \${$item['Field']}
      */
     public \${$item['Field']};\n";
     }
+
+    $copyPasteFields = join("\n", $copyPasteFields);
+    $copyPasteRequiredFields = join("\n", $copyPasteRequiredFields);
     $fields = join("\n", $fields);
 
     $singleName = substr($tableName, 0, -1);
@@ -228,6 +243,15 @@ function classFor($database, $tableName, $modelName = null)
 namespace Models\\Generated;
 
 use SmartModel;
+
+
+/* REQUIRED FIELDS FIRST, NULLABLE FIELDS AFTER. ALL FIELDS ARE DOWN BELOW.
+
+{$copyPasteRequiredFields}
+
+{$copyPasteFields}
+*/
+
 
 /**
  * Model {$singleName}.

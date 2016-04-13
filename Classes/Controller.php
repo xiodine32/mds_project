@@ -61,4 +61,52 @@ abstract class Controller
     {
         return isset($array[$key]) && (($value !== null && $array[$key] === $value) || $value === null);
     }
+
+    /**
+     * @param mixed $array Array to check against.
+     * @param string[] $keys Keys of array to check.
+     * @param boolean $checkEmpty If <b>TRUE</b>, checks to exist. If <b>FALSE</b>, checks only to be set.
+     * @return bool True if all keys are set.
+     */
+    protected function hasMany($array, $keys, $checkEmpty = true)
+    {
+        if ($checkEmpty) {
+            foreach ($keys as $key) {
+                if (empty($array[$key]))
+                    return false;
+            }
+            return true;
+        }
+        foreach ($keys as $key) {
+            if (!isset($array[$key]))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Assures a key exists and if it doesn't, initialises it.
+     * @param mixed $array Array to check against.
+     * @param string $key Key of array to check.
+     * @param mixed $default Default value
+     */
+    protected function assure(&$array, $key, $default = null)
+    {
+        if (empty($array[$key]))
+            $array[$key] = $default;
+    }
+
+    /**
+     * Assures multiple keys exist and if they don't, initialise them.
+     * @param mixed $array Array to check against.
+     * @param string[] $keys Keys of array to check.
+     * @param mixed $default Default value
+     */
+    protected function assureMany(&$array, $keys, $default = null)
+    {
+        foreach ($keys as $key) {
+            if (empty($array[$key]))
+                $array[$key] = $default;
+        }
+    }
 }

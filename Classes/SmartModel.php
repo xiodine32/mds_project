@@ -21,6 +21,46 @@ abstract class SmartModel
         $this->oldDatabaseTable = [];
     }
 
+    /**
+     * @param $tableName
+     * @param $query
+     * @param array $prepared
+     * @return false|EmptyModel|EmptyModel[]
+     */
+    public static function factoryFromQuery($tableName, $query, $prepared = [])
+    {
+
+        $return = Database::instance()->query($query, $prepared, Database::FETCH_ALL);
+
+        // return false on error
+        if (empty($return))
+            return false;
+
+        // if only one element, return it.
+        if (count($return) == 1) {
+            return self::factoryFromArray($tableName, $return[0]);
+        }
+
+        // if multiple element, return them.
+        $items = [];
+        foreach ($return as $item) {
+            $items[] = self::factoryFromArray($tableName, $item);
+        }
+        return $items;
+    }
+
+    /**
+     * Constructs an EmptyModel with rows from a PDO Return Statement.
+     * @param $tableName string table name.
+     * @param $row mixed[] PDO Return Statement
+     * @return EmptyModel
+     */
+    public static function factoryFromArray($tableName, $row)
+    {
+        $model = new EmptyModel($tableName);
+        $model->setFromArray($row, $model);
+        return $model;
+    }
 
     /**
      * Inserts the current model into the database.
@@ -94,7 +134,6 @@ abstract class SmartModel
         }
         return "(" . implode("\n", $text) . "\n)";
     }
-
 
     /**
      * Updates the current model in the Database.
