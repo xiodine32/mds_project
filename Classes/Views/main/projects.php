@@ -2,15 +2,21 @@
 /**
  * Created at: 01/04/16 17:37
  */
+/**
+ * @var $this \View
+ */
 if (!isset($viewbag)) die();
 $errors = isset($viewbag['error']);
 $success = isset($viewbag['success']);
 $contacts = isset($viewbag['contacts']) ? $viewbag['contacts'] : [];
+$departments = isset($viewbag['departments']) ? $viewbag['departments'] : [];
+$projects = isset($viewbag['projects']) ? $viewbag['projects'] : [];
+
 $formGenerator = new FormGenerator();
 $formGenerator->title = "Register new project";
 $formGenerator->formID = "addProject";
 $formGenerator->ajax = $viewbag['partial'];
-$formGenerator->action = "{$viewbag['root']}main/contacts";
+$formGenerator->action = "{$viewbag['root']}main/projects";
 $formGenerator->show = $viewbag['employee']->administrator;
 $formGenerator->success = isset($viewbag['success']);
 $formGenerator->successMessage = isset($viewbag['success']) ? $viewbag['success'] : "";
@@ -28,46 +34,49 @@ $formGenerator->addInput("text", "contactPjDescription", "pjDescription", "PJ De
 
 $formGenerator->addInput("text", "contactBudget", "budget", "Budget", "Error here, please fix!", "number");
 
-$formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Department", "Error here, please fix!", false, ['options' => [
-    "test" => "Test"
-]]);
-
-if (empty($contacts))
-    $contacts = [];
-if (!is_array($contacts))
-    $contacts = [$contacts];
-
+$deps = [];
+foreach ($departments as $department) {
+    /** @var $department \Models\Generated\ModelDepartment */
+    $deps[$department->departmentID] = $department->title;
+}
+$formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Department", "Error here, please fix!", false, ['options' => $deps]);
 
 ?>
 <h1 class="text-center">Projects</h1>
-<section id="addProject">
-    <?php if ($viewbag['employee']->administrator): ?>
-        <?php $formGenerator->addCustomBegin(); ?>
-            <!-- contactID -->
-            <div class="row">
-                <div class="small-3 columns">
-                    <label for="contactID"
-                           class="text-right middle<?= $errors ? ' is-invalid-label' : '' ?>">Contact: </label>
-                </div>
-                <div class="small-9 columns">
-                    <select class="<?= $errors ? ' is-invalid-input' : '' ?>" id="contactID" required name="contactID">
-                        <option value="">--- NONE ---</option>
-                        <?php foreach ($contacts as $contact): /**@var $contact \Models\Generated\ModelContact */ ?>
-                            <option value="<?= $contact->contactID ?>"><?= $contact->contactName ?></option>
-                        <?php endforeach ?>
-                    </select>
-                    <a href="#" onclick="return false;" id="addContactButton" class="button success small">Add
-                        Contact</a>
-                    <span class="form-error">Error here, please fix!</span>
-                </div>
+<?php if ($viewbag['employee']->administrator): ?>
+    <?php $formGenerator->addCustomBegin(); ?>
+    <!-- contactID -->
+    <div class="row">
+        <div class="small-3 columns">
+            <label for="contactID"
+                   class="text-right middle<?= $errors ? ' is-invalid-label' : '' ?>">Contact: </label>
             </div>
-        <?php $formGenerator->addCustomEnd(); ?>
-        <?php $formGenerator->addSubmit("button", "New Project"); ?>
-        <?= $formGenerator->generate() ?>
-    <?php endif ?>
-    
-</section>
-<script src="<?= $viewbag['root'] ?>content/main/quickadd.js"></script>
+        <div class="small-9 columns">
+            <select class="<?= $errors ? ' is-invalid-input' : '' ?>" id="contactID" required name="contactID">
+                <option value="">--- NONE ---</option>
+                <?php foreach ($contacts as $contact): /**@var $contact \Models\Generated\ModelContact */ ?>
+                    <option value="<?= $contact->contactID ?>"><?= $contact->contactName ?></option>
+                <?php endforeach ?>
+            </select>
+            <a href="#" onclick="return false;" id="addContactButton" class="button success small">Add
+                Contact</a>
+            <span class="form-error">Error here, please fix!</span>
+        </div>
+    </div>
+    <?php $formGenerator->addCustomEnd(); ?>
+    <?php $formGenerator->addSubmit("button", "New Project"); ?>
+    <?= $formGenerator->generate() ?>
+<?php endif ?>
+    <hr>
+    <div class="row">
+        <div class="large-12 columns">
+            <?php foreach ($projects as $project): /** @var \Models\Generated\ModelProject $project */ ?>
+                <pre><?= $project ?></pre>
+            <?php endforeach ?>
+        </div>
+    </div>
+<?= $this->includeJS("main/quickadd.js") ?>
+<?php $this->includeJSInlineBegin() ?>
 <script>
     (function () {
         $('#addContactButton').click(function () {
@@ -84,3 +93,4 @@ if (!is_array($contacts))
         });
     })();
 </script>
+<?php $this->includeJSInlineEnd() ?>

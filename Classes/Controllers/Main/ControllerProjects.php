@@ -7,6 +7,8 @@ namespace Controllers\Main;
 
 
 use Database;
+use Models\Generated\ModelDepartment;
+use Models\Generated\ModelProject;
 use SmartModel;
 
 class ControllerProjects extends ControllerMain
@@ -20,13 +22,46 @@ class ControllerProjects extends ControllerMain
     protected function mainCall($request)
     {
         if ($this->employee->administrator) {
-            $this->viewbag['contacts'] = SmartModel::factoryFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+            $this->viewbag['contacts'] = SmartModel::factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
             $error = Database::instance()->lastError();
             if ($error) {
                 var_dump($error);
             }
+
+            $this->viewbag['departments'] = (new ModelDepartment())->selectAll();
+            $error = Database::instance()->lastError();
+            if ($error) {
+                var_dump($error);
+            }
+
+            $postArr = ["title", "startDate", "endDate", "contractNumber", "pjDescription", "budget",
+                "contactID"];
+            if ($this->hasMany($request->post, $postArr)) {
+                return $this->tryAddProject($request);
+            }
+
         }
+
+        $this->viewbag['projects'] = (new ModelProject())->selectAll();
+
+        return new \View();
+    }
+
+    /**
+     * @param \Request $request
+     * @return \View
+     */
+    private function tryAddProject($request)
+    {
+        $project = SmartModel::factoryGeneratedModelFromPost("Project", $request);
+
+
+        if (!$project->insert()) {
+            $this->viewbag['error'] = Database::instance()->lastError();
+            return new \View();
+        }
+        $this->viewbag['success'] = 'Project successfully added!';
         return new \View();
     }
 }

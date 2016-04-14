@@ -5,13 +5,13 @@
  */
 
 /**
- * Interface ISessionable
+ * Interface Sessionable
  */
-interface ISessionable
+interface Sessionable
 {
     /**
      * Saves the model to session.
-     * @param ISessionable $item
+     * @param Sessionable $item
      * @param Request $request
      */
     static function toSession($item, $request);
@@ -19,7 +19,7 @@ interface ISessionable
     /**
      * Reads the model from session.
      * @param Request $request
-     * @return false|ISessionable
+     * @return false|Sessionable
      */
     static function fromSession($request);
 

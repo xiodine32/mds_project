@@ -47,7 +47,7 @@ class ControllerEmployees extends ControllerMain
             return new \View();
         }
 
-        $this->viewbag['error'] = ' Error ' . \Database::instance()->lastError();
+        $this->viewbag['error'] = \Database::instance()->lastError();
         return new \View();
     }
 }

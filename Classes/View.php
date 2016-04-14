@@ -24,6 +24,10 @@ class View
      */
     public function __construct($name = null, $isPartial = null)
     {
+//        foreach (glob(__DIR__ . "/../content/cache/*") as $item) {
+//            if (is_file($item))
+//                unlink($item);
+//        }
         $this->name = $name;
         $this->partial = $isPartial;
 
@@ -212,4 +216,103 @@ class View
 
         echo "<pre>Could not find view '" . substr($this->name, strlen($this->path) + 1, -4) . "'\n</pre>";
     }
+
+    public function includeCSS($paths, $minify = true)
+    {
+        if (defined("DISABLE_MINIFY"))
+            $minify = false;
+        if (!is_array($paths))
+            $paths = [$paths];
+        $includeMinifyFile = [];
+
+        foreach ($paths as $path) {
+
+            $pathNew = "{$this->viewbag['root']}content/css/{$path}";
+
+            if ($minify) {
+                $pathNew = Minifier::instance()->css(
+                    file_get_contents(__DIR__ . "/../content/css/{$path}"),
+                    "{$this->viewbag['root']}content/");
+            }
+
+            $includeMinifyFile[] = "<link rel='stylesheet' href='{$pathNew}' />\n";
+        }
+        return join("\n", $includeMinifyFile);
+    }
+
+    public function includeJS($paths, $minify = true)
+    {
+        if (defined("DISABLE_MINIFY"))
+            $minify = false;
+        if (!is_array($paths))
+            $paths = [$paths];
+        $includeMinifyFile = [];
+        foreach ($paths as $path) {
+
+            $pathNew = "{$this->viewbag['root']}content/js/{$path}";
+
+            if ($minify) {
+                $pathNew = Minifier::instance()->js(
+                    file_get_contents(__DIR__ . "/../content/js/{$path}"),
+                    "{$this->viewbag['root']}content/");
+            }
+
+            $includeMinifyFile[] = "<script type='application/javascript' src='{$pathNew}'></script>\n";
+        }
+        return join("\n", $includeMinifyFile);
+    }
+
+    public function includeCSSInlineBegin()
+    {
+        ob_start();
+    }
+
+    public function includeCSSInlineEnd()
+    {
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $content = trim($content);
+        if (substr($content, 0, 7) === "<style>")
+            $content = substr($content, 7);
+        if (substr($content, -8) === "</style>")
+            $content = substr($content, 0, -8);
+        $content = trim($content);
+
+        if (defined("DISABLE_MINIFY")) {
+            echo "<style type='text/css'>{$content}</style>\n";
+            return;
+        }
+
+        $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/");
+        echo "<link rel='stylesheet' href='{$pathNew}' />\n";
+    }
+
+    public function includeJSInlineBegin()
+    {
+        ob_start();
+    }
+
+    public function includeJSInlineEnd()
+    {
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $content = trim($content);
+        if (substr($content, 0, 8) === "<script>")
+            $content = substr($content, 8);
+        if (substr($content, -9) === "</script>")
+            $content = substr($content, 0, -9);
+        $content = trim($content);
+
+        if (defined("DISABLE_MINIFY")) {
+            echo "<script type='application/javascript'>{$content}</script>\n";
+            return;
+        }
+
+
+        $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
+        echo "<script type='application/javascript' src='{$pathNew}'></script>\n";
+    }
+
 }

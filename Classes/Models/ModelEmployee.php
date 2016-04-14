@@ -11,7 +11,7 @@ namespace Models;
  * Model Employee.
  * @package Models
  */
-class ModelEmployee extends Generated\ModelEmployee implements \ISessionable
+class ModelEmployee extends Generated\ModelEmployee implements \Sessionable
 {
     /**
      * Reads the model from session.
@@ -63,7 +63,7 @@ class ModelEmployee extends Generated\ModelEmployee implements \ISessionable
 
     /**
      * Saves the model to session.
-     * @param \ISessionable $item
+     * @param \Sessionable $item
      * @param \Request $request
      */
     static function toSession($item, $request)

@@ -9,15 +9,15 @@
 namespace Models;
 
 
-use ISessionable;
 use Request;
+use Sessionable;
 
-class ModelSprint extends Generated\ModelSprint implements \ISessionable
+class ModelSprint extends Generated\ModelSprint implements \Sessionable
 {
 
     /**
      * Saves the model to session.
-     * @param ISessionable $item
+     * @param Sessionable $item
      * @param Request $request
      */
     static function toSession($item, $request)
@@ -28,7 +28,7 @@ class ModelSprint extends Generated\ModelSprint implements \ISessionable
     /**
      * Reads the model from session.
      * @param Request $request
-     * @return false|ISessionable
+     * @return false|Sessionable
      */
     static function fromSession($request)
     {

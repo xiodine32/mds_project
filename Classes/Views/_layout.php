@@ -15,12 +15,9 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?= $viewbag['title'] ?> | RAT</title>
-    <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/foundation.min.css"/>
-    <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/foundation-icons.css">
-    <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/jquery-ui.css"/>
-    <link rel="stylesheet" href="<?= $viewbag['root'] ?>content/css/app.css"/>
-    <script src="<?= $viewbag['root'] ?>content/js/vendor/jquery.min.js"></script>
-    <script src="<?= $viewbag['root'] ?>content/js/vendor/jquery-ui.min.js"></script>
+    <?= $this->includeCSS(["foundation.min.css", "foundation-icons.css", "jquery-ui.css"], false) ?>
+    <?= $this->includeCSS("app.css", true) ?>
+    <?= $this->includeJS(["vendor/jquery.min.js", "vendor/jquery-ui.min.js"], false) ?>
 </head>
 <body>
 <div class="row expanded">
@@ -28,8 +25,8 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
         <?php $this->continueRun(); ?>
     </div>
 </div>
-<script src="<?= $viewbag['root'] ?>content/js/vendor/what-input.min.js"></script>
-<script src="<?= $viewbag['root'] ?>content/js/vendor/foundation.min.js"></script>
-<script src="<?= $viewbag['root'] ?>content/js/app.js"></script>
+
+<?= $this->includeJS(["vendor/what-input.min.js", "vendor/foundation.min.js"], false) ?>
+<?= $this->includeJS(["app.js"], true) ?>
 </body>
 </html>

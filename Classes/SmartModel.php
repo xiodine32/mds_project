@@ -27,7 +27,7 @@ abstract class SmartModel
      * @param array $prepared
      * @return false|EmptyModel|EmptyModel[]
      */
-    public static function factoryFromQuery($tableName, $query, $prepared = [])
+    public static function factoryEmptyModelsFromQuery($tableName, $query, $prepared = [])
     {
 
         $return = Database::instance()->query($query, $prepared, Database::FETCH_ALL);
@@ -36,15 +36,10 @@ abstract class SmartModel
         if (empty($return))
             return false;
 
-        // if only one element, return it.
-        if (count($return) == 1) {
-            return self::factoryFromArray($tableName, $return[0]);
-        }
-
-        // if multiple element, return them.
+        // if there are elements, return them.
         $items = [];
         foreach ($return as $item) {
-            $items[] = self::factoryFromArray($tableName, $item);
+            $items[] = self::factoryEmptyModelFromArray($tableName, $item);
         }
         return $items;
     }
@@ -55,11 +50,46 @@ abstract class SmartModel
      * @param $row mixed[] PDO Return Statement
      * @return EmptyModel
      */
-    public static function factoryFromArray($tableName, $row)
+    public static function factoryEmptyModelFromArray($tableName, $row)
     {
         $model = new EmptyModel($tableName);
         $model->setFromArray($row, $model);
         return $model;
+    }
+
+    /**
+     * Transforms child from table array into object (by selecting first element)
+     * @param array $array Table array.
+     * @param \SmartModel $element Element to be modified (by reference)
+     */
+    private function setFromArray($array, &$element)
+    {
+        foreach ($array as $key => $item) {
+            $element->$key = $item;
+        }
+    }
+
+    public static function factoryGeneratedModelFromPost($modelName, $request)
+    {
+        $modelName = "\\Models\\Generated\\Model{$modelName}";
+        $model = new $modelName();
+        /** @var $model SmartModel */
+        $elements = array_slice($model->getPublicMembers(), 1);
+        foreach ($elements as $key) {
+            $value = isset($request->post[$key]) ? $request->post[$key] : null;
+            $model->$key = $value;
+        }
+        return $model;
+    }
+
+    /**
+     * Gets public members of child class.
+     * @return string[] Public members.
+     */
+    private function getPublicMembers()
+    {
+        $publics = call_user_func('get_object_vars', $this->child);
+        return array_keys($publics);
     }
 
     /**
@@ -96,16 +126,6 @@ abstract class SmartModel
 //        echo "<pre>";var_dump($prepared);echo "</pre>";
 //        die();
         return Database::instance()->query($stmt, $prepared, \Database::FETCH_NONE) !== false;
-    }
-
-    /**
-     * Gets public members of child class.
-     * @return string[] Public members.
-     */
-    private function getPublicMembers()
-    {
-        $publics = call_user_func('get_object_vars', $this->child);
-        return array_keys($publics);
     }
 
     function __toString()
@@ -258,18 +278,6 @@ abstract class SmartModel
         $this->setFromArray($arr, $this->child);
 
         return true;
-    }
-
-    /**
-     * Transforms child from table array into object (by selecting first element)
-     * @param array $array Table array.
-     * @param \SmartModel $element Element to be modified (by reference)
-     */
-    private function setFromArray($array, &$element)
-    {
-        foreach ($array as $key => $item) {
-            $element->$key = $item;
-        }
     }
 
     /**

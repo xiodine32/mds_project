@@ -18,10 +18,7 @@ class Request
     {
 
         // lifetime in minutes, equals 2 hours.
-        $lifetime = 2 * 60;
-        session_cache_expire(0);
-        session_cache_limiter("no-cache");
-
+        $lifetime = 3 * 60;
 
         session_set_cookie_params($lifetime * 60, "/mds/", null, null, true);
         session_name("RAT");

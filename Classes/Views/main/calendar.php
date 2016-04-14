@@ -2,6 +2,9 @@
 /**
  * Created at: 01/04/16 15:23
  */
+/**
+ * @var $this \View
+ */
 if (!isset($viewbag)) die();
 /**
  * @var \Models\ModelEmployee $user
@@ -21,8 +24,7 @@ $user = $viewbag['employee'];
 <?php for ($i = date("W"); $i <= 52; $i++): ?>
     <?php showItem($i); ?>
 <?php endfor ?>
-    <script src="<?= $viewbag['root'] ?>/content/main/tasks.js"></script>
-
+<?= $this->includeJS("main/tasks.js") ?>
 <?php
 
 function showItem($weekDate)
