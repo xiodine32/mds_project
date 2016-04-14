@@ -24,17 +24,13 @@ class ControllerContacts extends ControllerMain
 
             $factories = SmartModel::factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
-
             $options = ["<option value=\"\">--- NONE ---</option>"];
             if (is_array($factories)) {
                 foreach ($factories as $item) {
                     $options[] = "<option value=\"{$item->contactID}\">{$item->contactName}</option>";
                 }
             }
-
-
-            return new \HTMLView('<select class="" id="contactID" required name="contactID">
-                        ' . join($options, "\n") . "</select>");
+            return new \ViewHTML('<select class="" id="contactID" required name="contactID">' . join("\n", $options) . "</select>");
         }
 
 

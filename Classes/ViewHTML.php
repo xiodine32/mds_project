@@ -3,7 +3,7 @@
 /**
  * Created at: 06/04/16 13:53
  */
-class HTMLView extends View
+class ViewHTML extends View
 {
     private $htmlText;
 

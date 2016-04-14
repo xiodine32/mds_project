@@ -6,7 +6,7 @@
  * Date: 4/10/2016
  * Time: 6:24 PM
  */
-class ContentView extends View
+class ViewContent extends View
 {
 
     private $metadataType;

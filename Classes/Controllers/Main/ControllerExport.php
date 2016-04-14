@@ -9,7 +9,7 @@
 namespace Controllers\Main;
 
 
-use ContentView;
+use ViewContent;
 
 class ControllerExport extends ControllerMain
 {
@@ -21,6 +21,6 @@ class ControllerExport extends ControllerMain
      */
     protected function mainCall($request)
     {
-        return new ContentView("text/csv", "test,test\n\na,b\nc,d", "test.csv");
+        return new ViewContent("text/csv", "test,test\n\na,b\nc,d", "test.csv");
     }
 }

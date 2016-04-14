@@ -3,7 +3,7 @@
 /**
  * Created at: 14/04/16 15:14
  */
-abstract class CompositeView extends View
+abstract class ViewComposite extends View
 {
     private $beforeView;
     private $afterView;

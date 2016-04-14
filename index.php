@@ -6,7 +6,6 @@
 
 // show errors if they exist
 //define("DISABLE_MINIFY", 1);
-ini_set("xdebug.default_enable", 1);
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
 
