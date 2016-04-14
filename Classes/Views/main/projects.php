@@ -76,7 +76,7 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
         </div>
     </div>
 <?= $this->includeJS("main/quickadd.js") ?>
-<?php $this->includeJSInlineBegin() ?>
+<?php $this->includeInlineBegin() ?>
 <script>
     (function () {
         $('#addContactButton').click(function () {

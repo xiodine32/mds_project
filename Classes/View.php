@@ -223,18 +223,19 @@ class View
             $minify = false;
         if (!is_array($paths))
             $paths = [$paths];
-        $includeMinifyFile = [];
 
-        foreach ($paths as $path) {
-
-            $pathNew = "{$this->viewbag['root']}content/css/{$path}";
-
-            if ($minify) {
-                $pathNew = Minifier::instance()->css(
-                    file_get_contents(__DIR__ . "/../content/css/{$path}"),
-                    "{$this->viewbag['root']}content/");
+        if ($minify) {
+            $content = "";
+            foreach ($paths as $path) {
+                $content .= file_get_contents(__DIR__ . "/../content/css/{$path}") . "\n";
             }
+            $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/");
+            return "<link rel='stylesheet' href='{$pathNew}' />\n";
+        }
 
+        $includeMinifyFile = [];
+        foreach ($paths as $path) {
+            $pathNew = "{$this->viewbag['root']}content/css/{$path}";
             $includeMinifyFile[] = "<link rel='stylesheet' href='{$pathNew}' />\n";
         }
         return join("\n", $includeMinifyFile);
@@ -246,25 +247,22 @@ class View
             $minify = false;
         if (!is_array($paths))
             $paths = [$paths];
+
+        if ($minify) {
+            $content = "";
+            foreach ($paths as $path) {
+                $content .= file_get_contents(__DIR__ . "/../content/js/{$path}") . "\n";
+            }
+            $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
+            return "<script type='application/javascript' src='{$pathNew}'></script>\n";
+        }
+
         $includeMinifyFile = [];
         foreach ($paths as $path) {
-
             $pathNew = "{$this->viewbag['root']}content/js/{$path}";
-
-            if ($minify) {
-                $pathNew = Minifier::instance()->js(
-                    file_get_contents(__DIR__ . "/../content/js/{$path}"),
-                    "{$this->viewbag['root']}content/");
-            }
-
             $includeMinifyFile[] = "<script type='application/javascript' src='{$pathNew}'></script>\n";
         }
         return join("\n", $includeMinifyFile);
-    }
-
-    public function includeCSSInlineBegin()
-    {
-        ob_start();
     }
 
     public function includeCSSInlineEnd()
@@ -288,7 +286,7 @@ class View
         echo "<link rel='stylesheet' href='{$pathNew}' />\n";
     }
 
-    public function includeJSInlineBegin()
+    public function includeInlineBegin()
     {
         ob_start();
     }

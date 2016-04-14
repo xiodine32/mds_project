@@ -15,9 +15,8 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?= $viewbag['title'] ?> | RAT</title>
-    <?= $this->includeCSS(["foundation.min.css", "foundation-icons.css", "jquery-ui.css"], false) ?>
-    <?= $this->includeCSS("app.css", true) ?>
-    <?= $this->includeJS(["vendor/jquery.min.js", "vendor/jquery-ui.min.js"], false) ?>
+    <?= $this->includeCSS(["foundation.min.css", "foundation-icons.css", "jquery-ui.css", "app.css"]) ?>
+    <?= $this->includeJS(["vendor/jquery.min.js", "vendor/jquery-ui.min.js"]) ?>
 </head>
 <body>
 <div class="row expanded">
@@ -26,7 +25,6 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
     </div>
 </div>
 
-<?= $this->includeJS(["vendor/what-input.min.js", "vendor/foundation.min.js"], false) ?>
-<?= $this->includeJS(["app.js"], true) ?>
+<?= $this->includeJS(["vendor/what-input.min.js", "vendor/foundation.min.js", "app.js"]) ?>
 </body>
 </html>

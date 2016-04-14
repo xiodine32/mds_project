@@ -69,7 +69,7 @@ class Minifier
 
     private function executeCSS($text, $cachePath)
     {
-        file_put_contents($cachePath, (new CSSmin(false))->run($text));
+        file_put_contents($cachePath, (new CSSmin())->run($text));
     }
 
     private function executeJS($text, $cachePath)
