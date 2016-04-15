@@ -221,67 +221,36 @@ class View
 
     public function includeCSS($paths, $minify = true)
     {
-        if (defined("DISABLE_MINIFY"))
-            $minify = false;
         if (!is_array($paths))
             $paths = [$paths];
 
-        if ($minify) {
-            $content = "";
-            foreach ($paths as $path) {
-                $content .= file_get_contents(__DIR__ . "/../content/css/{$path}") . "\n";
-            }
-            $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/");
-            echo "<link rel='stylesheet' href='{$pathNew}' />\n";
-            return;
-        }
-
-        $includeMinifyFile = [];
+        $content = "";
         foreach ($paths as $path) {
-            $pathNew = "{$this->viewbag['root']}content/css/{$path}";
-            $includeMinifyFile[] = "<link rel='stylesheet' href='{$pathNew}' />\n";
+            $content .= file_get_contents(__DIR__ . "/../content/css/{$path}") . "\n";
         }
-        echo join("\n", $includeMinifyFile);
+        $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/", $minify);
+        echo "<link rel='stylesheet' href='{$pathNew}' />\n";
+        return;
     }
 
     public function includeJS($paths, $minify = true, $atFooter = false)
     {
-        if (defined("DISABLE_MINIFY"))
-            $minify = false;
         if (!is_array($paths))
             $paths = [$paths];
 
-        if ($minify) {
-            $content = "";
-            foreach ($paths as $path) {
-                $content .= file_get_contents(__DIR__ . "/../content/js/{$path}") . "\n";
-            }
-            $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
-
-            $str = "<script type='application/javascript' src='{$pathNew}'></script>\n";
-
-            if ($atFooter) {
-                $this->footerJS .= $str;
-                return;
-            }
-            echo $str;
-            return;
-        }
-
-        $includeMinifyFile = [];
+        $content = "";
         foreach ($paths as $path) {
-            $pathNew = "{$this->viewbag['root']}content/js/{$path}";
-            $includeMinifyFile[] = "<script type='application/javascript' src='{$pathNew}'></script>\n";
+            $content .= file_get_contents(__DIR__ . "/../content/js/{$path}") . "\n";
         }
+        $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/", $minify);
 
-        $join = join("\n", $includeMinifyFile);
+        $str = "<script type='application/javascript' src='{$pathNew}'></script>\n";
 
         if ($atFooter) {
-            $this->footerJS .= $join;
+            $this->footerJS .= $str;
             return;
         }
-
-        echo $join;
+        echo $str;
     }
 
     public function includeCSSInlineEnd()
@@ -295,11 +264,6 @@ class View
         if (substr($content, -8) === "</style>")
             $content = substr($content, 0, -8);
         $content = trim($content);
-
-        if (defined("DISABLE_MINIFY")) {
-            echo "<style type='text/css'>{$content}</style>\n";
-            return;
-        }
 
         $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/");
         echo "<link rel='stylesheet' href='{$pathNew}' />\n";
@@ -321,20 +285,6 @@ class View
         if (substr($content, -9) === "</script>")
             $content = substr($content, 0, -9);
         $content = trim($content);
-
-        if (defined("DISABLE_MINIFY")) {
-
-            $text = "<script type='application/javascript'>{$content}</script>\n";
-
-            if ($atFooter) {
-                $this->footerJS .= $text;
-                return;
-            }
-
-            echo $text;
-            return;
-        }
-
 
         $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
         $text = "<script type='application/javascript' src='{$pathNew}'></script>\n";
