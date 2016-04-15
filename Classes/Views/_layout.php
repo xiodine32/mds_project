@@ -27,7 +27,6 @@ if (empty($viewbag['title'])) $viewbag['title'] = 'FIXME';
 </div>
 
 <?php $this->includeJS(["vendor/jquery-ui.min.js", "vendor/what-input.min.js", "vendor/foundation.min.js"], false) ?>
-<?php $this->includeJS(["app.js"], true) ?>
 <?= $this->footerJS ?>
 </body>
 </html>

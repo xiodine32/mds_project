@@ -59,4 +59,5 @@ $user = $viewbag['employee'];
             </div>
         </div>
     </div>
+<?php $this->includeJS(["app.js"], true, true) ?>
 <?php $this->continueRun(); ?>
