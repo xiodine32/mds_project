@@ -24,11 +24,15 @@ class FormGenerator
     private $generatedHTML;
     private $generatedScripts;
 
+    private $view;
+
     /**
      * FormGenerator constructor.
+     * @param View $view
      */
-    public function __construct()
+    public function __construct($view)
     {
+        $this->view = $view;
         $this->generatedHTML = "";
         $this->generatedScripts = "";
     }
@@ -206,7 +210,7 @@ class FormGenerator
             </div>
 {$this->generatedHTML}
         </form>
-{$this->generatedScripts}
+        {$this->generatedScripts}
         </section>";
     }
 

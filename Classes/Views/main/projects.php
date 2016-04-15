@@ -12,7 +12,7 @@ $contacts = isset($viewbag['contacts']) ? $viewbag['contacts'] : [];
 $departments = isset($viewbag['departments']) ? $viewbag['departments'] : [];
 $projects = isset($viewbag['projects']) ? $viewbag['projects'] : [];
 
-$formGenerator = new FormGenerator();
+$formGenerator = new FormGenerator($this);
 $formGenerator->title = "Register new project";
 $formGenerator->formID = "addProject";
 $formGenerator->ajax = $viewbag['partial'];
@@ -75,7 +75,7 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
             <?php endforeach ?>
         </div>
     </div>
-<?= $this->includeJS("main/quickadd.js") ?>
+<?php $this->includeJS("main/quickadd.js", true, true) ?>
 <?php $this->includeInlineBegin() ?>
 <script>
     (function () {

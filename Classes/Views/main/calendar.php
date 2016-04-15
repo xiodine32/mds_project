@@ -24,7 +24,7 @@ $user = $viewbag['employee'];
 <?php for ($i = date("W"); $i <= 52; $i++): ?>
     <?php showItem($i); ?>
 <?php endfor ?>
-<?= $this->includeJS("main/tasks.js") ?>
+<?php $this->includeJS("main/tasks.js") ?>
 <?php
 
 function showItem($weekDate)

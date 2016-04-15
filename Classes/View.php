@@ -16,6 +16,8 @@ class View
     private $layout = [];
     private $callIndex = -1;
     private $viewbag;
+    private $footerJS = "";
+
 
     /**
      * View constructor.
@@ -230,7 +232,8 @@ class View
                 $content .= file_get_contents(__DIR__ . "/../content/css/{$path}") . "\n";
             }
             $pathNew = Minifier::instance()->css($content, "{$this->viewbag['root']}content/");
-            return "<link rel='stylesheet' href='{$pathNew}' />\n";
+            echo "<link rel='stylesheet' href='{$pathNew}' />\n";
+            return;
         }
 
         $includeMinifyFile = [];
@@ -238,10 +241,10 @@ class View
             $pathNew = "{$this->viewbag['root']}content/css/{$path}";
             $includeMinifyFile[] = "<link rel='stylesheet' href='{$pathNew}' />\n";
         }
-        return join("\n", $includeMinifyFile);
+        echo join("\n", $includeMinifyFile);
     }
 
-    public function includeJS($paths, $minify = true)
+    public function includeJS($paths, $minify = true, $atFooter = false)
     {
         if (defined("DISABLE_MINIFY"))
             $minify = false;
@@ -254,7 +257,15 @@ class View
                 $content .= file_get_contents(__DIR__ . "/../content/js/{$path}") . "\n";
             }
             $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
-            return "<script type='application/javascript' src='{$pathNew}'></script>\n";
+
+            $str = "<script type='application/javascript' src='{$pathNew}'></script>\n";
+
+            if ($atFooter) {
+                $this->footerJS .= $str;
+                return;
+            }
+            echo $str;
+            return;
         }
 
         $includeMinifyFile = [];
@@ -262,7 +273,15 @@ class View
             $pathNew = "{$this->viewbag['root']}content/js/{$path}";
             $includeMinifyFile[] = "<script type='application/javascript' src='{$pathNew}'></script>\n";
         }
-        return join("\n", $includeMinifyFile);
+
+        $join = join("\n", $includeMinifyFile);
+
+        if ($atFooter) {
+            $this->footerJS .= $join;
+            return;
+        }
+
+        echo $join;
     }
 
     public function includeCSSInlineEnd()
@@ -291,7 +310,7 @@ class View
         ob_start();
     }
 
-    public function includeJSInlineEnd()
+    public function includeJSInlineEnd($atFooter = true)
     {
         $content = ob_get_contents();
         ob_end_clean();
@@ -304,13 +323,27 @@ class View
         $content = trim($content);
 
         if (defined("DISABLE_MINIFY")) {
-            echo "<script type='application/javascript'>{$content}</script>\n";
+
+            $text = "<script type='application/javascript'>{$content}</script>\n";
+
+            if ($atFooter) {
+                $this->footerJS .= $text;
+                return;
+            }
+
+            echo $text;
             return;
         }
 
 
         $pathNew = Minifier::instance()->js($content, "{$this->viewbag['root']}content/");
-        echo "<script type='application/javascript' src='{$pathNew}'></script>\n";
+        $text = "<script type='application/javascript' src='{$pathNew}'></script>\n";
+
+        if ($atFooter) {
+            $this->footerJS .= $text;
+            return;
+        }
+        echo $text;
     }
 
 }

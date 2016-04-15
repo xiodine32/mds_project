@@ -6,7 +6,7 @@ if (!isset($viewbag)) die();
 $errors = isset($viewbag['error']);
 $success = isset($viewbag['success']);
 
-$formGenerator = new FormGenerator();
+$formGenerator = new FormGenerator($this);
 $formGenerator->title = "Register new contact";
 $formGenerator->formID = "addContact";
 $formGenerator->ajax = $viewbag['partial'];
