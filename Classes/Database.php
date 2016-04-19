@@ -55,7 +55,7 @@ class Database
      */
     public function query($string, $array = [], $fetchType = Database::FETCH_NONE)
     {
-
+//        \Log::d("LOG QUERY", $string, $array, $fetchType);
         // set last error to null.
         $this->lastError = null;
         try {

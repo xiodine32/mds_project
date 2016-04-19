@@ -57,6 +57,10 @@ $globs = $truFiles;
         <style>
             #content {
                 font-family: Consolas, "Liberation Mono", Courier, monospace;
+                white-space: pre;
+                overflow: auto;
+                line-height: 1.5em;
+                text-align: left;
             }
         </style>
     </head>
@@ -83,9 +87,7 @@ $globs = $truFiles;
             <?php endforeach ?>
         </ul>
         <hr>
-        <div id="content">
-
-        </div>
+        <div id="content"></div>
     </div>
 </div>
 <script src="content/js/vendor/jquery.min.js"></script>

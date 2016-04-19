@@ -36,7 +36,7 @@ if (customCode()) {
     header("Location: cache.php");
 }
 
-$globs = glob(__DIR__ . "/content/cache/*");
+$globs = glob(__DIR__ . "/content/cache/*.min.*");
 
 ?>
     <!doctype html>
@@ -87,7 +87,7 @@ function customCode()
     $delete = filter_input(INPUT_GET, "delete", FILTER_SANITIZE_STRING);
     if ($delete) {
 
-        foreach (glob(__DIR__ . "/content/cache/*") as $file) {
+        foreach (glob(__DIR__ . "/content/cache/*.min.*") as $file) {
             unlink($file);
         }
 

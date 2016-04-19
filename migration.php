@@ -37,7 +37,8 @@ $database = Database::instance();
 
 if (!empty($_GET['classFor'])) {
     $code = classFor($database, $_GET['classFor']);
-    echo "<a href='?overwrite={$_GET['classFor']}' onclick='return confirm(\"You sure?\");'>Overwrite</a><pre><textarea onclick='this.select();' style='font-size: 0.5em;' rows='50'>{$code}</textarea></pre>";
+    echo "<a href='?overwrite={$_GET['classFor']}' onclick='return confirm(\"You sure?\");'>Overwrite</a><br>" .
+        highlight_string($code, true);
     die();
 }
 
@@ -76,7 +77,17 @@ if (!empty($_GET['overwriteall'])) {
     <style type="text/css">td, th {
             text-overflow: ellipsis;
             overflow: hidden;
-        }</style>
+        }
+
+        code {
+            white-space: inherit;
+            border: 0;
+            padding: 0;
+            background-color: inherit;
+            line-height: 1em;
+            font-size: 0.75em;
+        }
+    </style>
 </head>
 <body>
 <div class="row">
