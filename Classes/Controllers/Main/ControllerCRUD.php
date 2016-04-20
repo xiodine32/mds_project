@@ -21,7 +21,14 @@ abstract class ControllerCRUD extends ControllerMain
         $this->model = $model;
     }
 
-    protected function addItem($itemName, $nullable, $dataType)
+
+    /**
+     * @param string $itemName
+     * @param boolean $nullable
+     * @param string $dataType
+     * @param int|null $maxLength
+     */
+    protected function addItem($itemName, $nullable, $dataType, $maxLength = null)
     {
 
     }

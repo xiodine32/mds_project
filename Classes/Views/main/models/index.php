@@ -16,4 +16,11 @@ $form->successMessage = "Successfully regenerated controllers";
 $form->addSubmit("button", "Regenerate Tables", "name=\"regenerate\" value=\"true\"");
 
 ?>
-<?= $form->generate() ?>
+<?php if (DEV): ?>
+    <div class="callout">
+        <?= $form->generate() ?>
+    </div>
+<?php endif ?>
+<div class="text-center">
+    Please select a model.
+</div>
