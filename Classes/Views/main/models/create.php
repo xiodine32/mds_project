@@ -7,5 +7,11 @@
  * @var $this \View
  */
 if (!isset($viewbag) || !isset($this)) die();
+
+$isEdit = isset($isEdit) ? $isEdit : false;
+$title = $isEdit ? "Edit" : "Create";
+
+/** @var \FormGenerator $formg */
+$formg = $viewbag['form_generator'];
 ?>
-<h1 class="text-center">Create</h1>
+<?= $formg->generate() ?>

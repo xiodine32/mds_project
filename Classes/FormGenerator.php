@@ -116,10 +116,13 @@ class FormGenerator
 </select>";
         }
 
+        $maxlength = "";
+        if (isset($options['maxlength']))
+            $maxlength = "maxlength=\"{$options['maxlength']}\"";
 
         return "<input type=\"text\" name=\"{$inputName}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\">";
-    }
+                        {$translatedRequired} class=\"{$inputClass}\" {$maxlength}>";
+    }   
 
     /**
      * Constructs required attribute for the given parameter.

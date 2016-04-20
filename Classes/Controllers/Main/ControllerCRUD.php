@@ -13,6 +13,7 @@ abstract class ControllerCRUD extends ControllerMain
      */
     private $model;
     private $theThis;
+    private $fields = [];
 
     public function __construct($theThis, $model)
     {
@@ -30,7 +31,7 @@ abstract class ControllerCRUD extends ControllerMain
      */
     protected function addItem($itemName, $nullable, $dataType, $maxLength = null)
     {
-
+        $this->fields[$itemName] = [$nullable, $dataType, $maxLength];
     }
 
     /**
@@ -53,11 +54,11 @@ abstract class ControllerCRUD extends ControllerMain
         }
 
         if ($this->has($request->get, "edit")) {
-            return $this->edit();
+            return $this->edit($request);
         }
 
         if ($this->has($request->get, "create")) {
-            return $this->create();
+            return $this->create($request);
         }
 
         $this->viewbag['views'] = $this->model->selectAll();
@@ -130,18 +131,158 @@ abstract class ControllerCRUD extends ControllerMain
     }
 
     /**
+     * @param $request \Request
      * @return \View
      */
-    protected function edit()
+    protected function edit($request)
     {
-        return new \View("edit");
+        $view = new \View("edit");
+        $this->viewbag['form_generator'] = $this->generateForm($view, $request, true);
+        return $view;
     }
 
     /**
+     * @param $view \View
+     * @param $request \Request
+     * @param $isEdit boolean
+     * @param null $hasStatus
+     * @return \FormGenerator
+     */
+    private function generateForm($view, $request, $isEdit, $hasStatus = null)
+    {
+        $formGenerator = new \FormGenerator($view);
+        $formGenerator->formID = $isEdit ? "edit" : "create";
+        $formGenerator->title = $isEdit ? "Edit" : "Create";
+        $formGenerator->action = $request->server['REQUEST_URI'];
+        $formGenerator->errorMessage = "Error occured. Please fix and try again.";
+        if ($hasStatus === true) {
+            $formGenerator->success = true;
+            $formGenerator->successMessage = "Operation completed successfully";
+        } elseif ($hasStatus === false) {
+            $formGenerator->error = true;
+            $formGenerator->errorMessage = "Error occured: " . \Database::instance()->lastError();
+        }
+
+        $primaryKey = true;
+        foreach ($this->fields as $fieldName => $field) {
+
+            // skip first item
+            if (!$isEdit && $primaryKey) {
+                $primaryKey = false;
+                continue;
+            }
+
+
+            list($fieldNullable, $fieldDataType, $fieldMaxLength) = $field;
+
+            $options = [];
+            if ($fieldMaxLength)
+                $options = ["maxlength" => $fieldMaxLength];
+
+            $required = $this->getRequired($fieldNullable, $fieldDataType);
+
+            $hasID = false;
+            $fieldNameReplaced = str_replace("ID", "", $fieldName, $hasID);
+
+
+            $prettyName = $this->getPrettyName($fieldNameReplaced);
+
+            if ($hasID) {
+                $options["options"] = $this->getOptionsForFieldID($fieldName);
+                if ($options["options"] === false)
+                    $hasID = false;
+            }
+
+            $formGenerator->addInput(
+                $hasID ? "select" : "text",
+                $formGenerator->formID . ucfirst($fieldName),
+                $fieldName,
+                $prettyName,
+                "Error here!",
+                $required,
+                $options);
+        }
+
+        $formGenerator->addSubmit("button", $isEdit ? "Save" : "Create");
+
+        return $formGenerator;
+    }
+
+    /**
+     * @param $fieldNullable
+     * @param $fieldDataType
+     * @return bool|string
+     */
+    private function getRequired($fieldNullable, $fieldDataType)
+    {
+        $required = !$fieldNullable;
+
+        if ($required && in_array($fieldDataType, ["number", "int", "short"]))
+            return "number";
+        if ($required && in_array($fieldDataType, ['varchar', 'text', 'char']))
+            return true;
+        if ($required && in_array($fieldDataType, ['date']))
+            return "date";
+        if ($required && in_array($fieldDataType, ['datetime']))
+            return "datetime";
+
+        return $required;
+    }
+
+    /**
+     * @param $fieldNameReplaced string
+     * @return string
+     */
+    private function getPrettyName($fieldNameReplaced)
+    {
+        $prettyName = strtoupper($fieldNameReplaced[0]);
+        for ($i = 1; $i < strlen($fieldNameReplaced); $i++) {
+            if (strtoupper($fieldNameReplaced[$i]) === $fieldNameReplaced[$i])
+                $prettyName .= " ";
+            $prettyName .= $fieldNameReplaced[$i];
+        }
+        return $prettyName;
+    }
+
+    private function getOptionsForFieldID($fieldName)
+    {
+        if (!preg_match('/^([a-zA-Z]+)ID$/', $fieldName, $matches))
+            return false;
+        $fieldName = $matches[1];
+        $list = [];
+        $fieldName = ucfirst($fieldName) . "s";
+        $models = \SmartModel::factoryEmptyModelsFromQuery($fieldName, "SELECT * FROM {$fieldName}");
+        if ($models === false)
+            $models = [];
+        foreach ($models as $item) {
+            /**@var $item \SmartModel */
+            $list[$item->getPrimaryKeyValue()] = "" . $item;
+        }
+        return $list;
+    }
+
+    /**
+     * @param $request \Request
      * @return \View
      */
-    protected function create()
+    protected function create($request)
     {
-        return new \View("create");
+        $view = new \View("create");
+
+        $status = null;
+        $items = array_slice($this->model->getPublicMembers(), 1);
+        if ($this->hasMany($request->post, $items, false)) {
+            $this->assureMany($request->post, $items, null);
+            $model = \SmartModel::factoryGeneratedModelFromPost(substr($this->model->getTableName(), 0, -1), $request);
+
+            $status = false;
+            if ($model->insert()) {
+                $status = true;
+            }
+        }
+
+        $this->viewbag['form_generator'] = $this->generateForm($view, $request, false, $status);
+
+        return $view;
     }
 }

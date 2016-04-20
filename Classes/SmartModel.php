@@ -20,7 +20,7 @@ abstract class SmartModel
         $this->tableName = $tableName;
         $this->oldDatabaseTable = [];
     }
-
+    
     /**
      * @param $tableName
      * @param $query
@@ -86,10 +86,18 @@ abstract class SmartModel
      * Gets public members of child class.
      * @return string[] Public members.
      */
-    private function getPublicMembers()
+    public function getPublicMembers()
     {
         $publics = call_user_func('get_object_vars', $this->child);
         return array_keys($publics);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     /**
@@ -131,7 +139,7 @@ abstract class SmartModel
     function __toString()
     {
         $publics = $this->getPublicMembers();
-        $text = [substr(get_called_class(), 7)];
+        $text = [];
         $max = 0;
         foreach ($publics as $item) {
             $strlen = strlen($item);
@@ -288,6 +296,8 @@ abstract class SmartModel
         }
         $selects = join(", ", $selects);
 
+        if ($this->child instanceof EmptyModel)
+            $selects = "*";
 
         $table = $this->tableName;
 
@@ -323,6 +333,8 @@ abstract class SmartModel
         }
         $selects = join(", ", $selects);
 
+        if ($this->child instanceof EmptyModel)
+            $selects = "*";
 
         $table = $this->tableName;
 
@@ -331,8 +343,8 @@ abstract class SmartModel
         if (!empty($where))
             $whereQuery = "WHERE {$where}";
 
-
         $arr = Database::instance()->query("SELECT {$selects} FROM {$table} {$whereQuery}", $prepared, \Database::FETCH_ALL);
+//        echo "<pre>";var_dump("SELECT {$selects} FROM {$table} {$whereQuery}");echo "</pre>";
 
         if ($arr === false)
             return false;
