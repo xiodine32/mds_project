@@ -101,6 +101,7 @@ class FormGenerator
      */
     private function constructInput($inputType, $inputID, $inputText, $inputName, $options, $translatedRequired, $inputClass)
     {
+        $selected = !empty($options['value']) ? $options['value'] : "";
         if ($inputType === 'select') {
 
             $theOptions = isset($options['options']) ? $options['options'] : [];
@@ -108,7 +109,10 @@ class FormGenerator
             $optionsText = '<option value="">--- NONE ---</option>';
 
             foreach ($theOptions as $key => $value) {
-                $optionsText .= "<option value='{$key}'>{$value}</option>\n";
+                $text = "";
+                if ($key == $selected)
+                    $text = "selected";
+                $optionsText .= "<option value='{$key}' {$text}>{$value}</option>\n";
             }
 
             return "<select name=\"{$inputName}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
@@ -121,7 +125,7 @@ class FormGenerator
             $maxlength = "maxlength=\"{$options['maxlength']}\"";
 
         return "<input type=\"text\" name=\"{$inputName}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\" {$maxlength}>";
+                        {$translatedRequired} class=\"{$inputClass}\" {$maxlength} value=\"{$selected}\">";
     }   
 
     /**

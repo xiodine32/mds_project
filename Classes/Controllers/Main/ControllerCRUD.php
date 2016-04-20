@@ -137,22 +137,40 @@ abstract class ControllerCRUD extends ControllerMain
     protected function edit($request)
     {
         $view = new \View("edit");
-        $this->viewbag['form_generator'] = $this->generateForm($view, $request, true);
+
+        $this->model->selectPrimaryKey($request->get['edit']);
+
+        $status = null;
+
+        $items = array_slice($this->model->getPublicMembers(), 1);
+        if ($this->hasMany($request->post, $items, false)) {
+            $this->assureMany($request->post, $items, null);
+            foreach ($items as $item) {
+                $this->model->$item = $request->post[$item];
+            }
+
+            $status = false;
+            if ($this->model->update()) {
+                $status = true;
+            }
+        }
+
+        $this->viewbag['form_generator'] = $this->generateForm($view, $request, $this->model, $status);
         return $view;
     }
 
     /**
      * @param $view \View
      * @param $request \Request
-     * @param $isEdit boolean
+     * @param $editData false|\SmartModel
      * @param null $hasStatus
      * @return \FormGenerator
      */
-    private function generateForm($view, $request, $isEdit, $hasStatus = null)
+    private function generateForm($view, $request, $editData, $hasStatus = null)
     {
         $formGenerator = new \FormGenerator($view);
-        $formGenerator->formID = $isEdit ? "edit" : "create";
-        $formGenerator->title = $isEdit ? "Edit" : "Create";
+        $formGenerator->formID = !empty($editData) ? "edit" : "create";
+        $formGenerator->title = !empty($editData) ? "Edit" : "Create";
         $formGenerator->action = $request->server['REQUEST_URI'];
         $formGenerator->errorMessage = "Error occured. Please fix and try again.";
         if ($hasStatus === true) {
@@ -167,45 +185,60 @@ abstract class ControllerCRUD extends ControllerMain
         foreach ($this->fields as $fieldName => $field) {
 
             // skip first item
-            if (!$isEdit && $primaryKey) {
+            if (empty($editData) && $primaryKey) {
                 $primaryKey = false;
                 continue;
             }
 
-
-            list($fieldNullable, $fieldDataType, $fieldMaxLength) = $field;
-
-            $options = [];
-            if ($fieldMaxLength)
-                $options = ["maxlength" => $fieldMaxLength];
-
-            $required = $this->getRequired($fieldNullable, $fieldDataType);
-
-            $hasID = false;
-            $fieldNameReplaced = str_replace("ID", "", $fieldName, $hasID);
-
-
-            $prettyName = $this->getPrettyName($fieldNameReplaced);
-
-            if ($hasID) {
-                $options["options"] = $this->getOptionsForFieldID($fieldName);
-                if ($options["options"] === false)
-                    $hasID = false;
+            $added = null;
+//            echo "<pre>";var_dump($fieldName);echo "</pre>";
+            if (!empty($editData)) {
+                $added = $editData->$fieldName;
             }
 
-            $formGenerator->addInput(
-                $hasID ? "select" : "text",
-                $formGenerator->formID . ucfirst($fieldName),
-                $fieldName,
-                $prettyName,
-                "Error here!",
-                $required,
-                $options);
+            $this->formGenerateInput($field, $fieldName, $formGenerator, $added);
         }
 
-        $formGenerator->addSubmit("button", $isEdit ? "Save" : "Create");
+        $formGenerator->addSubmit("button", !empty($editData) ? "Save" : "Create");
 
         return $formGenerator;
+    }
+
+    /**
+     * @param $field string
+     * @param $fieldName string
+     * @param $formGenerator \FormGenerator
+     * @param null|string $value
+     */
+    private function formGenerateInput($field, $fieldName, $formGenerator, $value = null)
+    {
+        list($fieldNullable, $fieldDataType, $fieldMaxLength) = $field;
+
+        $options = ["value" => $value];
+        if ($fieldMaxLength)
+            $options["maxlength"] = $fieldMaxLength;
+
+        $required = $this->getRequired($fieldNullable, $fieldDataType);
+
+        $hasID = false;
+        $fieldNameReplaced = str_replace("ID", "", $fieldName, $hasID);
+
+
+        $prettyName = $this->getPrettyName($fieldNameReplaced);
+
+        if ($hasID) {
+            $options["options"] = $this->getOptionsForFieldID($fieldName);
+            if ($options["options"] === false)
+                $hasID = false;
+        }
+        $formGenerator->addInput(
+            $hasID ? "select" : "text",
+            $formGenerator->formID . ucfirst($fieldName),
+            $fieldName,
+            $prettyName,
+            "Error here!",
+            $required,
+            $options);
     }
 
     /**
