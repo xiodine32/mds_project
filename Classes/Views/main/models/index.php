@@ -17,7 +17,7 @@ $form->addSubmit("button", "Regenerate Tables", "name=\"regenerate\" value=\"tru
 
 ?>
 <?php if (DEV): ?>
-    <div class="callout">
+    <div class="callout secondary">
         <?= $form->generate() ?>
     </div>
 <?php endif ?>
