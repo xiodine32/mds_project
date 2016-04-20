@@ -3,6 +3,8 @@
  * Created at: 30/03/16 15:56
  */
 
+use Controllers\Main\Models\ControllerIndex;
+
 // start session
 session_start();
 
@@ -61,6 +63,8 @@ if (!empty($_GET['overwriteall'])) {
         $filePath = $modelPath . "{$modelName}.php";
         file_put_contents($filePath, $code);
     }
+    $controller = new ControllerIndex();
+    $controller->regenerateControllers();
     header("Location: migration.php");
     die();
 }

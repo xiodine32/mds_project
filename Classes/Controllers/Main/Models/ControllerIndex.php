@@ -45,7 +45,7 @@ class ControllerIndex extends ControllerMain
         return new \View();
     }
 
-    private function regenerateControllers()
+    public function regenerateControllers()
     {
         $this->viewbag['success'] = true;
 
