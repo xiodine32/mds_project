@@ -43,8 +43,30 @@ abstract class ControllerCRUD extends ControllerMain
         if (!$this->employee->administrator)
             return new \Redirect("/");
 
+        $this->addClassName();
+
+
         $this->addModelsToViewbag();
 
+        if ($this->has($request->get, "delete")) {
+            return $this->delete($request);
+        }
+
+        if ($this->has($request->get, "edit")) {
+            return $this->edit();
+        }
+
+        if ($this->has($request->get, "create")) {
+            return $this->create();
+        }
+
+        $this->viewbag['views'] = $this->model->selectAll();
+
+        return new \View("view");
+    }
+
+    protected function addClassName()
+    {
         $className = get_class($this->model);
 
         $lastChar = strrpos($className, "\\");
@@ -52,10 +74,6 @@ abstract class ControllerCRUD extends ControllerMain
 
         $className = substr($className, $start);
         $this->viewbag['model'] = $className;
-
-        $this->viewbag['views'] = $this->model->selectAll();
-
-        return new \View("view");
     }
 
     private function addModelsToViewbag()
@@ -94,5 +112,36 @@ abstract class ControllerCRUD extends ControllerMain
         }
         closedir($dir);
         return $models;
+    }
+
+    /**
+     * @param \Request $request
+     * @return \Redirect
+     */
+    protected function delete($request)
+    {
+        if ($this->model->selectPrimaryKey($request->get['delete'])) {
+            if ($this->model->delete()) {
+                return new \Redirect(".");
+            }
+            return new \Redirect(".?error=true");
+        }
+        return new \Redirect(".");
+    }
+
+    /**
+     * @return \View
+     */
+    protected function edit()
+    {
+        return new \View("edit");
+    }
+
+    /**
+     * @return \View
+     */
+    protected function create()
+    {
+        return new \View("create");
     }
 }

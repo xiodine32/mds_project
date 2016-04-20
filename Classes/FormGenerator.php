@@ -147,7 +147,7 @@ class FormGenerator
      * @param string $buttonText Button text.
      * @param string $additionalTags
      */
-    public function addSubmit($classList, $buttonText, $additionalTags)
+    public function addSubmit($classList, $buttonText, $additionalTags = "")
     {
         $this->generatedHTML .= "<!-- Submit -->
             <div class=\"row\">

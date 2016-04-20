@@ -246,6 +246,35 @@ abstract class SmartModel
     }
 
     /**
+     * Gets the primary key value associated with the model.
+     * @return mixed Primary Key value.
+     */
+    public function getPrimaryKeyValue()
+    {
+        $key = $this->getPrimaryKey();
+        return $this->child->$key;
+    }
+
+    /**
+     * Gets the primary key associated with the model.
+     * @return string Primary Key name.
+     */
+    public function getPrimaryKey()
+    {
+        return $this->getPublicMembers()[0];
+    }
+
+    /**
+     * Transforms the model into the selected query, using the primary key as a selector
+     * @param string $value
+     * @return bool
+     */
+    public function selectPrimaryKey($value)
+    {
+        return $this->select("`" . $this->getPrimaryKey() . "` = ?", [$value]);
+    }
+
+    /**
      * Transforms the model into the selected query.
      * @param string $where SQL where.
      * @param array $prepared Prepared array for where.

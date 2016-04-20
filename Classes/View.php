@@ -10,6 +10,7 @@
  */
 class View
 {
+    protected $viewPage;
     private $name;
     private $partial;
     private $path;
@@ -17,7 +18,6 @@ class View
     private $callIndex = -1;
     private $viewbag;
     private $footerJS = "";
-
 
     /**
      * View constructor.
@@ -32,7 +32,7 @@ class View
 //        }
         $this->name = $name;
         $this->partial = $isPartial;
-
+        $this->viewPage = $this->viewbag['root'] . $GLOBALS['PAGE_STR'];
     }
 
     /**
@@ -110,6 +110,7 @@ class View
         // set existing values
         $this->viewbag['root'] = $this->applyRoot($request);
         $this->viewbag['partial'] = $this->partial;
+        $this->viewbag['page'] = $this->viewPage;
 
         // if not partial, call recursively the layout engine.
         if (!$this->partial) {
