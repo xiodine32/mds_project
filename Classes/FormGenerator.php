@@ -145,8 +145,9 @@ class FormGenerator
      * Add a submit button.
      * @param string $classList Button class list.
      * @param string $buttonText Button text.
+     * @param string $additionalTags
      */
-    public function addSubmit($classList, $buttonText)
+    public function addSubmit($classList, $buttonText, $additionalTags)
     {
         $this->generatedHTML .= "<!-- Submit -->
             <div class=\"row\">
@@ -155,7 +156,7 @@ class FormGenerator
                            class=\"text-right middle\">Submit: </label>
                 </div>
                 <div class=\"small-9 column\">
-                    <button type=\"submit\" class=\"{$classList}\" id=\"submitButton\">{$buttonText}</button>
+                    <button type=\"submit\" class=\"{$classList}\" id=\"submitButton\" {$additionalTags}>{$buttonText}</button>
                 </div>
             </div>\n";
     }
@@ -201,7 +202,7 @@ class FormGenerator
         }
 
         return "<section id=\"{$this->formID}\">
-        <h3 class=\"text-center\">Register new contact</h3>
+        <h3 class=\"text-center\">{$this->title}</h3>
         {$successText}
         <form action=\"{$this->action}\" method=\"post\" data-abide novalidate>
             <div data-abide-error class=\"alert callout\" style=\"{$errorStyle}\" {$errorRole}>
