@@ -32,6 +32,16 @@ abstract class Controller
         // lock session
         $request->lockSession();
 
+
+        // if not object and json
+        if (!is_object($view) && json_decode($view, false) !== null) {
+            $view = new ViewJSON($view, true);
+        }
+
+        // if not object and thus not json.
+        if (!is_object($view)) {
+            $view = new ViewHTML($view, true);
+        }
         // set view name
         $view->setImplicitViewName(get_called_class());
 

@@ -16,6 +16,6 @@ class ControllerJson extends ControllerMain
      */
     protected function mainCall($request)
     {
-        return new \View();
+        return json_encode(["this" => "true"]);
     }
 }
