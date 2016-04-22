@@ -21,7 +21,7 @@ class ControllerProjects extends ControllerMain
     protected function mainCall($request)
     {
         if ($this->employee->administrator) {
-            $this->viewbag['contacts'] = \SmartModelFactory::instance()->factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+            $this->viewbag['contacts'] = \SmartModelFactory::instance()->emptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
             $error = Database::instance()->lastError();
             if ($error) {
@@ -53,7 +53,7 @@ RIGHT JOIN Contacts USING (contactID)");
      */
     private function tryAddProject($request)
     {
-        $project = \SmartModelFactory::instance()->factoryGeneratedModelFromPost("Project", $request);
+        $project = \SmartModelFactory::instance()->generatedModelFromPost("Project", $request);
 
 
         if (!$project->insert()) {

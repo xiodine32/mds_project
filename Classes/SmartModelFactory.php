@@ -21,7 +21,7 @@ class SmartModelFactory
         return $singleton;
     }
 
-    public function factoryGeneratedModelFromPost($modelName, $request)
+    public function generatedModelFromPost($modelName, $request)
     {
         $modelName = "\\Models\\Generated\\Model{$modelName}";
         $model = new $modelName();
@@ -34,7 +34,7 @@ class SmartModelFactory
         return $model;
     }
 
-    public function factoryEmptyModelsFromQuery($tableName, $query, $prepared = [])
+    public function emptyModelsFromQuery($tableName, $query, $prepared = [])
     {
 
         $return = Database::instance()->query($query, $prepared, Database::FETCH_ALL);

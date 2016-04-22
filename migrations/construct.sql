@@ -14,7 +14,8 @@ CREATE TABLE Departments (
   deptDescription TEXT            NULL,
   startDate       DATE            NOT NULL,
   monthlyExpenses DOUBLE          NOT NULL
-);
+)
+  ENGINE = InnoDB;
 
 # tester/ senior developer / project manager / recruiter
 CREATE TABLE Roles (
@@ -22,7 +23,8 @@ CREATE TABLE Roles (
   name           VARCHAR(50)     NOT NULL,
   jobDescription TEXT,
   averageSalary  DOUBLE          NOT NULL
-);
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE Employees (
   employeeID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -41,17 +43,18 @@ CREATE TABLE Employees (
   hireDate        DATE        NOT NULL,
   terminationDate DATE        NULL,
   administrator   INT(1)      NOT NULL,
-  CONSTRAINT FK_RoleID FOREIGN KEY (roleID)
+  CONSTRAINT FOREIGN KEY (roleID)
   REFERENCES Roles (roleID)
     ON DELETE SET NULL,
-  CONSTRAINT FK_DepartmentID FOREIGN KEY (departmentID)
+  CONSTRAINT FOREIGN KEY (departmentID)
   REFERENCES Departments (departmentID)
     ON DELETE SET NULL,
-  CONSTRAINT FK_ManagerID FOREIGN KEY (managerID)
+  CONSTRAINT FOREIGN KEY (managerID)
   REFERENCES Employees (employeeID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+  ENGINE = InnoDB;
 CREATE TABLE Educations (
   educationID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   title       VARCHAR(50)     NOT NULL,
@@ -59,11 +62,12 @@ CREATE TABLE Educations (
   endDate     DATE            NOT NULL,
   degree      VARCHAR(50)     NOT NULL,
   employeeID  INT             NOT NULL,
-  CONSTRAINT FK_EmployeeID FOREIGN KEY (employeeID)
+  CONSTRAINT FOREIGN KEY (employeeID)
   REFERENCES Employees (employeeID)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-);
+)
+  ENGINE = InnoDB;
 CREATE TABLE Contacts (
   contactID       INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   contactName     VARCHAR(50)     NOT NULL,
@@ -71,7 +75,8 @@ CREATE TABLE Contacts (
   faxNumber       VARCHAR(13),
   email           VARCHAR(50),
   physicalAddress VARCHAR(75)
-);
+)
+  ENGINE = InnoDB;
 CREATE TABLE Projects (
   projectID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   title          VARCHAR(50)     NOT NULL,
@@ -82,25 +87,27 @@ CREATE TABLE Projects (
   budget         DOUBLE          NOT NULL,
   departmentID   INT,
   contactID      INT             NOT NULL,
-  CONSTRAINT FK_DepartmentIDProject FOREIGN KEY (departmentID)
+  CONSTRAINT FOREIGN KEY (departmentID)
   REFERENCES Departments (departmentID)
     ON DELETE SET NULL,
-  CONSTRAINT FK_ContactID FOREIGN KEY (contactID)
+  CONSTRAINT FOREIGN KEY (contactID)
   REFERENCES Contacts (contactID)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-);
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE Sprints (
   sprintID  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   projectID INT             NOT NULL,
   startDate DATE            NOT NULL,
   endDate   DATE            NOT NULL,
-  CONSTRAINT FK_ProjectID FOREIGN KEY (projectID)
+  CONSTRAINT FOREIGN KEY (projectID)
   REFERENCES Projects (projectID)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-);
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE Tasks (
   taskID          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -117,18 +124,19 @@ CREATE TABLE Tasks (
 
   estimation      INT,
 
-  CONSTRAINT FK_SprintID FOREIGN KEY (sprintID)
+  CONSTRAINT FOREIGN KEY (sprintID)
   REFERENCES Sprints (sprintID)
     ON DELETE SET NULL
     ON UPDATE NO ACTION,
 
-  CONSTRAINT FK_EmployeeIDTasks FOREIGN KEY (employeeID)
+  CONSTRAINT FOREIGN KEY (employeeID)
   REFERENCES Employees (employeeID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
 
-  CONSTRAINT FK_RoleIDTasks FOREIGN KEY (roleID)
+  CONSTRAINT FOREIGN KEY (roleID)
   REFERENCES Roles (roleID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+  ENGINE = InnoDB;

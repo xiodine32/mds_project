@@ -21,7 +21,7 @@ class ControllerContacts extends ControllerMain
     {
         if ($this->has($request->post, 'reloadcontactID')) {
 
-            $factories = \SmartModelFactory::instance()->factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+            $factories = \SmartModelFactory::instance()->emptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
             $options = ["<option value=\"\">--- NONE ---</option>"];
             if (is_array($factories)) {
