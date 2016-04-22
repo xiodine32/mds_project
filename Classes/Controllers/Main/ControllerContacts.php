@@ -8,7 +8,6 @@ namespace Controllers\Main;
 
 use Database;
 use Models\Generated\ModelContact;
-use SmartModel;
 
 class ControllerContacts extends ControllerMain
 {
@@ -22,7 +21,7 @@ class ControllerContacts extends ControllerMain
     {
         if ($this->has($request->post, 'reloadcontactID')) {
 
-            $factories = SmartModel::factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+            $factories = \SmartModelFactory::instance()->factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
             $options = ["<option value=\"\">--- NONE ---</option>"];
             if (is_array($factories)) {

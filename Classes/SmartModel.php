@@ -5,7 +5,7 @@
  */
 abstract class SmartModel
 {
-    private $tableName;
+    public $tableName;
     private $child;
     private $oldDatabaseTable;
 
@@ -19,85 +19,6 @@ abstract class SmartModel
         $this->child = $theThis;
         $this->tableName = $tableName;
         $this->oldDatabaseTable = [];
-    }
-    
-    /**
-     * @param $tableName
-     * @param $query
-     * @param array $prepared
-     * @return false|EmptyModel|EmptyModel[]
-     */
-    public static function factoryEmptyModelsFromQuery($tableName, $query, $prepared = [])
-    {
-
-        $return = Database::instance()->query($query, $prepared, Database::FETCH_ALL);
-
-        // return false on error
-        if (empty($return))
-            return false;
-
-        // if there are elements, return them.
-        $items = [];
-        foreach ($return as $item) {
-            $items[] = self::factoryEmptyModelFromArray($tableName, $item);
-        }
-        return $items;
-    }
-
-    /**
-     * Constructs an EmptyModel with rows from a PDO Return Statement.
-     * @param $tableName string table name.
-     * @param $row mixed[] PDO Return Statement
-     * @return EmptyModel
-     */
-    public static function factoryEmptyModelFromArray($tableName, $row)
-    {
-        $model = new EmptyModel($tableName);
-        $model->setFromArray($row, $model);
-        return $model;
-    }
-
-    /**
-     * Transforms child from table array into object (by selecting first element)
-     * @param array $array Table array.
-     * @param \SmartModel $element Element to be modified (by reference)
-     */
-    private function setFromArray($array, &$element)
-    {
-        foreach ($array as $key => $item) {
-            $element->$key = $item;
-        }
-    }
-
-    public static function factoryGeneratedModelFromPost($modelName, $request)
-    {
-        $modelName = "\\Models\\Generated\\Model{$modelName}";
-        $model = new $modelName();
-        /** @var $model SmartModel */
-        $elements = array_slice($model->getPublicMembers(), 1);
-        foreach ($elements as $key) {
-            $value = isset($request->post[$key]) ? $request->post[$key] : null;
-            $model->$key = $value;
-        }
-        return $model;
-    }
-
-    /**
-     * Gets public members of child class.
-     * @return string[] Public members.
-     */
-    public function getPublicMembers()
-    {
-        $publics = call_user_func('get_object_vars', $this->child);
-        return array_keys($publics);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
     }
 
     /**
@@ -134,6 +55,23 @@ abstract class SmartModel
 //        echo "<pre>";var_dump($prepared);echo "</pre>";
 //        die();
         return Database::instance()->query($stmt, $prepared, \Database::FETCH_NONE) !== false;
+    }
+
+    /**
+     * Gets public members of child class.
+     * @return string[] Public members.
+     */
+    public function getPublicMembers()
+    {
+        $publics = call_user_func('get_object_vars', $this->child);
+        $array_keys = array_keys($publics);
+        foreach ($array_keys as $key => $item) {
+            if ($item === "tableName") {
+                unset($array_keys[$key]);
+                break;
+            }
+        }
+        return array_values($array_keys);
     }
 
     function __toString()
@@ -254,32 +192,13 @@ abstract class SmartModel
     }
 
     /**
-     * Gets the primary key value associated with the model.
-     * @return mixed Primary Key value.
-     */
-    public function getPrimaryKeyValue()
-    {
-        $key = $this->getPrimaryKey();
-        return $this->child->$key;
-    }
-
-    /**
-     * Gets the primary key associated with the model.
-     * @return string Primary Key name.
-     */
-    public function getPrimaryKey()
-    {
-        return $this->getPublicMembers()[0];
-    }
-
-    /**
      * Transforms the model into the selected query, using the primary key as a selector
      * @param string $value
      * @return bool
      */
     public function selectPrimaryKey($value)
     {
-        return $this->select("`" . $this->getPrimaryKey() . "` = ?", [$value]);
+        return $this->select("`" . $this->getPrimaryKey(false) . "` = ?", [$value]);
     }
 
     /**
@@ -314,9 +233,34 @@ abstract class SmartModel
 
         $this->oldDatabaseTable = $arr;
 
-        $this->setFromArray($arr, $this->child);
+        self::setFromArray($arr, $this->child);
 
         return true;
+    }
+
+    /**
+     * Transforms child from table array into object (by selecting first element)
+     * @param array $array Table array.
+     * @param \SmartModel $element Element to be modified (by reference)
+     */
+    public static function setFromArray($array, &$element)
+    {
+        foreach ($array as $key => $item) {
+            $element->$key = $item;
+        }
+    }
+
+    /**
+     * Gets the primary key [value] associated with the model.
+     * @param bool [$value]
+     * @return mixed Primary Key [value].
+     */
+    public function getPrimaryKey($getValue = true)
+    {
+        $key = $this->getPublicMembers()[0];
+        if ($getValue)
+            return $this->child->$key;
+        return $key;
     }
 
     /**
@@ -344,7 +288,6 @@ abstract class SmartModel
             $whereQuery = "WHERE {$where}";
 
         $arr = Database::instance()->query("SELECT {$selects} FROM {$table} {$whereQuery}", $prepared, \Database::FETCH_ALL);
-//        echo "<pre>";var_dump("SELECT {$selects} FROM {$table} {$whereQuery}");echo "</pre>";
 
         if ($arr === false)
             return false;
@@ -352,7 +295,7 @@ abstract class SmartModel
         $returnItems = [];
         foreach ($arr as $items) {
             $leItem = new $this->child();
-            $this->setFromArray($items, $leItem);
+            self::setFromArray($items, $leItem);
             $returnItems[] = $leItem;
         }
 
@@ -365,7 +308,7 @@ abstract class SmartModel
      */
     public function delete()
     {
-        $primaryKey = $this->getPublicMembers()[0];
+        $primaryKey = $this->getPrimaryKey(false);
         $prepared = [$this->child->$primaryKey];
 
         $stmt = "DELETE FROM `{$this->tableName}` WHERE `{$primaryKey}` = ?";

@@ -9,7 +9,6 @@ namespace Controllers\Main;
 use Database;
 use Models\Generated\ModelDepartment;
 use Models\Generated\ModelProject;
-use SmartModel;
 
 class ControllerProjects extends ControllerMain
 {
@@ -22,7 +21,7 @@ class ControllerProjects extends ControllerMain
     protected function mainCall($request)
     {
         if ($this->employee->administrator) {
-            $this->viewbag['contacts'] = SmartModel::factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
+            $this->viewbag['contacts'] = \SmartModelFactory::instance()->factoryEmptyModelsFromQuery("Contacts", "SELECT Contacts.* FROM Projects 
 RIGHT JOIN Contacts USING (contactID)");
             $error = Database::instance()->lastError();
             if ($error) {
@@ -54,7 +53,7 @@ RIGHT JOIN Contacts USING (contactID)");
      */
     private function tryAddProject($request)
     {
-        $project = SmartModel::factoryGeneratedModelFromPost("Project", $request);
+        $project = \SmartModelFactory::instance()->factoryGeneratedModelFromPost("Project", $request);
 
 
         if (!$project->insert()) {

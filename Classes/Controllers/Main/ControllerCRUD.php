@@ -284,12 +284,12 @@ abstract class ControllerCRUD extends ControllerMain
         $fieldName = $matches[1];
         $list = [];
         $fieldName = ucfirst($fieldName) . "s";
-        $models = \SmartModel::factoryEmptyModelsFromQuery($fieldName, "SELECT * FROM {$fieldName}");
+        $models = \SmartModelFactory::instance()->factoryEmptyModelsFromQuery($fieldName, "SELECT * FROM {$fieldName}");
         if ($models === false)
             $models = [];
         foreach ($models as $item) {
             /**@var $item \SmartModel */
-            $list[$item->getPrimaryKeyValue()] = "" . $item;
+            $list[$item->getPrimaryKey()] = "" . $item;
         }
         return $list;
     }
@@ -306,7 +306,10 @@ abstract class ControllerCRUD extends ControllerMain
         $items = array_slice($this->model->getPublicMembers(), 1);
         if ($this->hasMany($request->post, $items, false)) {
             $this->assureMany($request->post, $items, null);
-            $model = \SmartModel::factoryGeneratedModelFromPost(substr($this->model->getTableName(), 0, -1), $request);
+            $model = \SmartModelFactory::instance()->factoryGeneratedModelFromPost(
+                substr($this->model->tableName, 0, -1),
+                $request
+            );
 
             $status = false;
             if ($model->insert()) {

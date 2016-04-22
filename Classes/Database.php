@@ -77,7 +77,6 @@ class Database
             // fetching multiple
             return $value ? $prepare->fetchAll() : false;
         } catch (Exception $prepare) {
-
             // on exception, set last error.
             $this->lastError = $prepare;
 
