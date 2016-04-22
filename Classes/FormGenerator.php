@@ -32,6 +32,7 @@ class FormGenerator
      */
     public function __construct($view)
     {
+        $this->show = true;
         $this->view = $view;
         $this->generatedHTML = "";
         $this->generatedScripts = "";
@@ -48,6 +49,8 @@ class FormGenerator
      * @param array [$options] can be:
      * <ul>
      * <li>'options' => [] ... for selects</li>
+     * <li>'value' => "something" for inputs or selects that have data set</li>
+     * <li>'attributes' => "something" for additional attributes appended</li>
      * </ul>
      */
     public function addInput($inputType, $inputID, $inputName, $inputText, $inputErrorText, $requiredType, $options = [])
@@ -67,7 +70,7 @@ class FormGenerator
             $this->generatedScripts .= "<script>$(function() { $(\"#{$inputID}\").datepicker({inline:true, dateFormat: \"yy-mm-dd\"});});</script>\n";
         }
 
-        $this->generatedHTML .= "<!-- {$inputID} -->
+        $this->generatedHTML .= "<!-- {$inputText} -->
 <div class=\"row\">
     <div class=\"small-3 columns\">
         <label for=\"{$inputID}\"
@@ -90,17 +93,16 @@ class FormGenerator
      * @param $options array can be:
      * <ul>
      * <li>'options' => [] ... for selects</li>
-     * <li>name => "something" for different name</li>
+     * <li>'value' => "something" for inputs or selects that have data set</li>
+     * <li>'attributes' => "something" for additional attributes appended</li>
      * </ul>
      * @param string $translatedRequired Required & pattern translated to attribute text.
      * @param $inputClass string Input classes.
      * @return string <ul>
-     * <ul>
-     * <li>'options' => [] ... for selects</li>
-     * </ul>
      */
     private function constructInput($inputType, $inputID, $inputText, $inputName, $options, $translatedRequired, $inputClass)
     {
+        $attr = empty($options['attributes']) ? "" : $options['attributes'];
         $selected = !empty($options['value']) ? $options['value'] : "";
         if ($inputType === 'select') {
 
@@ -115,7 +117,7 @@ class FormGenerator
                 $optionsText .= "<option value='{$key}' {$text}>{$value}</option>\n";
             }
 
-            return "<select name=\"{$inputName}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired}>
+            return "<select name=\"{$inputName}\" id=\"{$inputID}\" class=\"{$inputClass}\" {$translatedRequired} {$attr}>
 {$optionsText}
 </select>";
         }
@@ -124,8 +126,9 @@ class FormGenerator
         if (isset($options['maxlength']))
             $maxlength = "maxlength=\"{$options['maxlength']}\"";
 
-        return "<input type=\"text\" name=\"{$inputName}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
-                        {$translatedRequired} class=\"{$inputClass}\" {$maxlength} value=\"{$selected}\">";
+        $inputType = "type=\"{$inputType}\"";
+        return "<input {$inputType} name=\"{$inputName}\" placeholder=\"{$inputText}\" id=\"{$inputID}\"
+                        {$translatedRequired} class=\"{$inputClass}\" {$maxlength} value=\"{$selected}\" {$attr}>";
     }   
 
     /**
@@ -174,6 +177,9 @@ class FormGenerator
      */
     public function generate()
     {
+        if (!$this->show)
+            return "";
+
         if ($this->ajax)
             $this->generatedScripts = '<script>
     $(function () {
@@ -198,7 +204,10 @@ class FormGenerator
 </script>';
         $successText = "";
         if ($this->success)
-            $successText = "<div class=\"callout success\">{$this->successMessage}</div>";
+            $successText =
+                "<div class='row'><div class='large-12 columns'>
+    <div class=\"callout success\">{$this->successMessage}</div>
+</div></div>";
 
 
         $errorStyle = "display:none";
@@ -212,9 +221,13 @@ class FormGenerator
         <h3 class=\"text-center\">{$this->title}</h3>
         {$successText}
         <form action=\"{$this->action}\" method=\"post\" data-abide novalidate>
-            <div data-abide-error class=\"alert callout\" style=\"{$errorStyle}\" {$errorRole}>
-                <p><i class=\"fi-alert\"></i> {$this->errorMessage}
-                </p>
+            <div class='row'>
+                <div class='large-12'>
+                    <div data-abide-error class=\"alert callout\" style=\"{$errorStyle}\" {$errorRole}>
+                        <p><i class=\"fi-alert\"></i> {$this->errorMessage}
+                        </p>
+                    </div>
+                </div>
             </div>
 {$this->generatedHTML}
         </form>

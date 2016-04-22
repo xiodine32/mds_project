@@ -29,9 +29,7 @@ $formGenerator->addSubmit("button", "Add");
 
 ?>
     <h1 class="text-center">Contacts</h1>
-<?php if ($viewbag['employee']->administrator): ?>
     <?= $formGenerator->generate() ?>
-<?php endif ?>
 <div class="row">
     <div class="columns large-12">
         <hr>
