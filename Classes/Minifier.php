@@ -80,7 +80,7 @@ class Minifier
     private function executeCSS($text, $cachePath, $extraJuice)
     {
         if ($extraJuice) {
-            $text = (new CSSmin())->run($text);
+            $text = (new \CSSmin())->run($text);
         }
 
         file_put_contents($cachePath, $text);

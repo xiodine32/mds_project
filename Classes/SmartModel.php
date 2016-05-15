@@ -65,10 +65,15 @@ abstract class SmartModel
     {
         $publics = call_user_func('get_object_vars', $this->child);
         $array_keys = array_keys($publics);
-        foreach ($array_keys as $key => $item) {
-            if ($item === "tableName") {
-                unset($array_keys[$key]);
-                break;
+        $finding = true;
+        while ($finding) {
+            $finding = false;
+            foreach ($array_keys as $key => $item) {
+                if (in_array($item, ["tableName", "child", "oldDatabaseTable"])) {
+                    unset($array_keys[$key]);
+                    $finding = true;
+                    break;
+                }
             }
         }
         return array_values($array_keys);
@@ -226,8 +231,8 @@ abstract class SmartModel
             $whereQuery = "WHERE {$where}";
 
 
-        $arr = Database::instance()->query("SELECT {$selects} FROM {$table} {$whereQuery}", $prepared, \Database::FETCH_ONE);
-
+        $cmd = "SELECT {$selects} FROM {$table} {$whereQuery}";
+        $arr = Database::instance()->query($cmd, $prepared, \Database::FETCH_ONE);
         if ($arr === false)
             return false;
 
