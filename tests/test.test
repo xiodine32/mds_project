@@ -1,0 +1,16 @@
+# Combination between natural language and PHP statements.
+#
+#
+#
+# DEFINITIONS
+# ---
+#
+# load - loads a class and creates variable "$this"
+# expect field <field name> <equals to>
+# method <method name>(<arg0>, <arg1>, ...)
+# expect true <statement until line end>
+#
+load \Models\ModelEmployee
+expect field password null
+method setPassword("test")
+expect true password_verify("test", $this->password)
