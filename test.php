@@ -145,7 +145,7 @@ function runLanguage($fileData)
                 list($fieldName, $value) = explode(" ", $line);
                 echo "<p>expecting field " . highlightCode($fieldName);
                 echo " (" . highlightCode($test->getField($fieldName)) . ") - ";
-                echo "(" . highlightCode($value) . ") - ";
+                echo highlightCode($value) . " - ";
                 if ($test->expectField($fieldName, $value)) {
                     echo "<span class='label success'>true</span>";
                     continue;

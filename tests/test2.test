@@ -11,6 +11,6 @@
 # expect true <statement until line end>
 #
 load \Models\ModelEmployee
-expect field password nulla
-method setPassword("test")
+expect field password null
+method setPassword("test2")
 expect true password_verify("test", $this->password)

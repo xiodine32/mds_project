@@ -97,22 +97,10 @@ CREATE TABLE Projects (
 )
   ENGINE = InnoDB;
 
-CREATE TABLE Sprints (
-  sprintID  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  projectID INT             NOT NULL,
-  startDate DATE            NOT NULL,
-  endDate   DATE            NOT NULL,
-  CONSTRAINT FOREIGN KEY (projectID)
-  REFERENCES Projects (projectID)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
-)
-  ENGINE = InnoDB;
-
 CREATE TABLE Tasks (
   taskID          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 
-  sprintID        INT,
+  projectID       INT,
   employeeID      INT,
   roleID          INT,
 
@@ -124,8 +112,8 @@ CREATE TABLE Tasks (
 
   estimation      INT,
 
-  CONSTRAINT FOREIGN KEY (sprintID)
-  REFERENCES Sprints (sprintID)
+  CONSTRAINT FOREIGN KEY (projectID)
+  REFERENCES Projects (projectID)
     ON DELETE SET NULL
     ON UPDATE NO ACTION,
 
