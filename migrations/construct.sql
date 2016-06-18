@@ -26,35 +26,65 @@ CREATE TABLE Roles (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE Projects (
+  projectID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  title          VARCHAR(50)     NOT NULL,
+  startDate      DATE            NOT NULL,
+  endDate        DATE            NOT NULL,
+  contractNumber VARCHAR(50)     NOT NULL,
+  pjDescription  TEXT            NOT NULL,
+  budget         DOUBLE          NOT NULL,
+  departmentID   INT,
+  contactID      INT             NOT NULL,
+  CONSTRAINT FOREIGN KEY (departmentID)
+  REFERENCES Departments (departmentID)
+    ON DELETE SET NULL,
+  CONSTRAINT FOREIGN KEY (contactID)
+  REFERENCES Contacts (contactID)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+)
+  ENGINE = InnoDB;
+
 CREATE TABLE Employees (
   employeeID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  roleID          INT,
-  account         VARCHAR(50) NOT NULL UNIQUE,
-  password        VARCHAR(64) NOT NULL,
-  managerID       INT,
-  departmentID    INT,
-  firstName       VARCHAR(50) NOT NULL,
-  middleInitial   CHAR(1),
-  lastName        VARCHAR(50) NOT NULL,
-  title           VARCHAR(50) NOT NULL,
-  cnp             VARCHAR(13) NOT NULL,
-  salary          DOUBLE      NOT NULL,
-  priorSalary     DOUBLE      NOT NULL,
-  hireDate        DATE        NOT NULL,
-  terminationDate DATE        NULL,
-  administrator   INT(1)      NOT NULL,
+  account         VARCHAR(50)     NOT NULL UNIQUE,
+  password        VARCHAR(64)     NOT NULL,
+  firstName       VARCHAR(50)     NOT NULL,
+  middleInitial   CHAR(1)         NULL,
+  lastName        VARCHAR(50)     NOT NULL,
+  title           VARCHAR(50)     NOT NULL,
+  cnp             VARCHAR(13)     NOT NULL,
+  salary          DOUBLE          NOT NULL,
+  priorSalary     DOUBLE          NOT NULL,
+  hireDate        DATE            NOT NULL,
+  terminationDate DATE            NULL,
+  administrator   INT(1)          NOT NULL,
+
+  projectID       INT             NULL,
+  managerID       INT             NULL,
+  roleID          INT             NULL,
+  departmentID    INT             NULL,
+
   CONSTRAINT FOREIGN KEY (roleID)
   REFERENCES Roles (roleID)
     ON DELETE SET NULL,
   CONSTRAINT FOREIGN KEY (departmentID)
   REFERENCES Departments (departmentID)
     ON DELETE SET NULL,
+
+  CONSTRAINT FOREIGN KEY (projectID)
+  REFERENCES Projects (projectID)
+    ON DELETE SET NULL,
+
+
   CONSTRAINT FOREIGN KEY (managerID)
   REFERENCES Employees (employeeID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
   ENGINE = InnoDB;
+
 CREATE TABLE Educations (
   educationID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   title       VARCHAR(50)     NOT NULL,
@@ -77,25 +107,7 @@ CREATE TABLE Contacts (
   physicalAddress VARCHAR(75)
 )
   ENGINE = InnoDB;
-CREATE TABLE Projects (
-  projectID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  title          VARCHAR(50)     NOT NULL,
-  startDate      DATE            NOT NULL,
-  endDate        DATE            NOT NULL,
-  contractNumber VARCHAR(50)     NOT NULL,
-  pjDescription  TEXT            NOT NULL,
-  budget         DOUBLE          NOT NULL,
-  departmentID   INT,
-  contactID      INT             NOT NULL,
-  CONSTRAINT FOREIGN KEY (departmentID)
-  REFERENCES Departments (departmentID)
-    ON DELETE SET NULL,
-  CONSTRAINT FOREIGN KEY (contactID)
-  REFERENCES Contacts (contactID)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
-)
-  ENGINE = InnoDB;
+
 
 CREATE TABLE Tasks (
   taskID          INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

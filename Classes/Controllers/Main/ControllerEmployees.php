@@ -6,6 +6,8 @@
 namespace Controllers\Main;
 
 
+use Models\Generated\ModelDepartment;
+use Models\Generated\ModelProject;
 use Models\ModelEmployee;
 
 class ControllerEmployees extends ControllerMain
@@ -18,10 +20,18 @@ class ControllerEmployees extends ControllerMain
      */
     protected function mainCall($request)
     {
+        $view = new \View();
         if ($this->has($request->post, "username")) {
-            return $this->tryRegister($request->post);
+            $view = $this->tryRegister($request->post);
         }
-        return new \View();
+        if ($this->has($request->post, "link", "true")) {
+            $view = $this->tryLinkDepartments($request->post);
+        }
+        if ($this->has($request->post, "linkProject", "true")) {
+            $view = $this->tryLinkProjects($request->post);
+        }
+        $this->updateViewBag();
+        return $view;
     }
 
     private function tryRegister($post)
@@ -50,4 +60,49 @@ class ControllerEmployees extends ControllerMain
         $this->viewbag['error'] = \Database::instance()->lastError();
         return new \View();
     }
+
+    private function tryLinkDepartments($post)
+    {
+        return $this->tryLinkEmployeeWithID($post, "department", "employee", "departmentID");
+    }
+
+    private function tryLinkEmployeeWithID($post, $to, $fromArray, $field)
+    {
+        if (empty($post[$to]))
+            return new \View();
+        $this->assure($post, $fromArray, []);
+        $targetID = intval($post[$to]);
+        if ($post[$to] === "null")
+            $targetID = null;
+        foreach ($post[$fromArray] as $employeeID) {
+            $employee = new ModelEmployee();
+            if (!$employee->select('employeeID = ?', [intval($employeeID)])) {
+                return new \View();
+            }
+            $employee->$field = $targetID;
+            if (!$employee->update()) {
+                return new \View();
+            }
+        }
+        return new \View();
+    }
+
+    private function tryLinkProjects($post)
+    {
+        return $this->tryLinkEmployeeWithID($post, "project", "employeeProject", "projectID");
+    }
+
+    private function updateViewBag()
+    {
+        $this->viewbag['employees'] = (new ModelEmployee())->selectAll();
+        $this->viewbag['departments'] = (new ModelDepartment())->selectAll();
+        $this->viewbag['projects'] = (new ModelProject())->selectAll();
+
+        $newDepartment = new ModelDepartment();
+        $newProject = new ModelProject();
+
+        $this->viewbag['departments'][] = $newDepartment;
+        $this->viewbag['projects'][] = $newProject;
+    }
+
 }
