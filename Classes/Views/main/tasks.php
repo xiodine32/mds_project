@@ -7,6 +7,8 @@ if (!isset($viewbag)) die();
  * @var \Models\ModelEmployee $user
  */
 $user = $viewbag['employee'];
+if (empty($viewbag['tasks']))
+    $viewbag['tasks'] = [];
 ?>
 <section>
     <h1 class="text-center">Add New Task</h1>

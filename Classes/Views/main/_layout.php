@@ -32,7 +32,10 @@ $user = $viewbag['employee'];
                 <ul class="menu" data-responsive-menu="drilldown medium-dropdown">
                     <li><a href="<?= $viewbag['root'] ?>main/calendar">Calendar</a></li>
                     <li><a href="<?= $viewbag['root'] ?>main/projects">Projects</a></li>
-                    <li><a href="<?= $viewbag['root'] ?>main/employees">Employees</a></li>
+                    <?php if ($user->administrator): ?>
+                        <li><a href="<?= $viewbag['root'] ?>main/employees">Employees</a></li>
+                        <li><a href="<?= $viewbag['root'] ?>main/departments">Departments</a></li>
+                    <?php endif ?>
                 </ul>
             </div>
             <div class="top-bar-right">

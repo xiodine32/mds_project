@@ -95,6 +95,19 @@ abstract class Controller
     }
 
     /**
+     * Assures multiple keys exist and if they don't, initialise them.
+     * @param mixed $array Array to check against.
+     * @param string[] $keys Keys of array to check.
+     * @param mixed $default Default value
+     */
+    protected function assureMany(&$array, $keys, $default = null)
+    {
+        foreach ($keys as $key) {
+            $this->assure($array, $key, $default);
+        }
+    }
+
+    /**
      * Assures a key exists and if it doesn't, initialises it.
      * @param mixed $array Array to check against.
      * @param string $key Key of array to check.
@@ -104,19 +117,5 @@ abstract class Controller
     {
         if (empty($array[$key]))
             $array[$key] = $default;
-    }
-
-    /**
-     * Assures multiple keys exist and if they don't, initialise them.
-     * @param mixed $array Array to check against.
-     * @param string[] $keys Keys of array to check.
-     * @param mixed $default Default value
-     */
-    protected function assureMany(&$array, $keys, $default = null)
-    {
-        foreach ($keys as $key) {
-            if (empty($array[$key]))
-                $array[$key] = $default;
-        }
     }
 }

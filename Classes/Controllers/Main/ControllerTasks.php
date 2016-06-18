@@ -21,7 +21,7 @@ class ControllerTasks extends ControllerMain
         if ($this->has($request->post, "task") && $this->has($request->post, "difficulty")) {
             return $this->tryInsertNewPost($request->post['task'], $request->post['difficulty']);
         }
-        $this->viewbag['tasks'] = (new ModelTask())->selectAll();
+        $this->addTasksToViewbag();
         return new \View();
     }
 
@@ -36,10 +36,25 @@ class ControllerTasks extends ControllerMain
         $model = new ModelTask();
         $model->taskDescription = $task;
         $model->difficulty = intval($difficulty);
-        if (!$model->insert()) {
-            echo "Failed to insert: " . \Database::instance()->lastError();
-            return new \View();
+        $isEmpty = empty($model->taskDescription);
+        if ($isEmpty || !$model->insert()) {
+            $view = new \View();
+            $this->addTasksToViewbag();
+            if (!$isEmpty) {
+                echo "Failed to insert: " . \Database::instance()->lastError();
+                return $view;
+            }
+            $this->viewbag["error"] = "Task name cannot be empty!";
+            return $view;
         }
         return new \Redirect("/main/calendar");
+    }
+
+    /**
+     * Adds tasks to viewbag.
+     */
+    private function addTasksToViewbag()
+    {
+        $this->viewbag['tasks'] = (new ModelTask())->selectAll();
     }
 }
