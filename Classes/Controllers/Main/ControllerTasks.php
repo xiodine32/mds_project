@@ -6,7 +6,9 @@
 namespace Controllers\Main;
 
 
+use Models\Generated\ModelProject;
 use Models\Generated\ModelTask;
+use Models\ModelEmployee;
 
 class ControllerTasks extends ControllerMain
 {
@@ -18,33 +20,35 @@ class ControllerTasks extends ControllerMain
      */
     protected function mainCall($request)
     {
-        if ($this->has($request->post, "task") && $this->has($request->post, "difficulty")) {
-            return $this->tryInsertNewPost($request->post['task'], $request->post['difficulty']);
+        $view = new \View();
+        if ($this->hasMany($request->post, ["taskDescription", "difficulty", "estimation"])) {
+            $view = $this->tryInsertNewTask($request->post);
+        }
+        if ($this->hasMany($request->post, ["updateTaskID", "updateTask"])) {
+            $view = $this->tryUpdateTask($request->post);
         }
         $this->addTasksToViewbag();
-        return new \View();
+        return $view;
     }
 
     /**
      * Inserts a new item into the database
-     * @param $task string
-     * @param $difficulty
+     * @param $post array
      * @return \View
      */
-    private function tryInsertNewPost($task, $difficulty)
+    private function tryInsertNewTask($post)
     {
+        $this->assureMany($post, ["taskDescription", "difficulty",
+            "projectID", "employeeID", "roleID",
+            "startDate", "endDate", "estimation"]);
+
+
         $model = new ModelTask();
-        $model->taskDescription = $task;
-        $model->difficulty = intval($difficulty);
-        $isEmpty = empty($model->taskDescription);
-        if ($isEmpty || !$model->insert()) {
+        \SmartModel::setFromArray($post, $model);
+        if (!$model->insert()) {
             $view = new \View();
             $this->addTasksToViewbag();
-            if (!$isEmpty) {
-                echo "Failed to insert: " . \Database::instance()->lastError();
-                return $view;
-            }
-            $this->viewbag["error"] = "Task name cannot be empty!";
+            echo "Failed to insert: " . \Database::instance()->lastError();
             return $view;
         }
         return new \Redirect("/main/calendar");
@@ -55,6 +59,43 @@ class ControllerTasks extends ControllerMain
      */
     private function addTasksToViewbag()
     {
-        $this->viewbag['tasks'] = (new ModelTask())->selectAll();
+        if ($this->employee->administrator) {
+            $this->viewbag['employees'] = (new ModelEmployee())->selectAll();
+            $this->viewbag['projects'] = (new ModelProject())->selectAll();
+            $this->viewbag['tasks'] = (new ModelTask())->selectAll();
+            $this->viewbag['tasks'] = $this->addEmployeeToSelect($this->viewbag['tasks']);
+
+        }
+        $this->viewbag['user_tasks'] = (new ModelTask())->selectAll("employeeID = ?", [$this->employee->employeeID]);
+        $this->viewbag['user_tasks'] = $this->addEmployeeToSelect($this->viewbag['user_tasks']);
+
+    }
+
+    /**
+     * @param $array array
+     * @return mixed
+     */
+    private function addEmployeeToSelect($array)
+    {
+        /**
+         * @var $item ModelTask
+         */
+        foreach ($array as $item) {
+            $item->employee = new ModelEmployee();
+            $item->employee->select("employeeID = ?", [$item->employeeID]);
+            $item->project = new ModelProject();
+            $item->project->select("projectID = ?", [$item->projectID]);
+        }
+        return $array;
+    }
+
+    private function tryUpdateTask($post)
+    {
+        //TODO: add validation so that an admin can modify other people's tasks, but a normal user can't
+        $model = new ModelTask();
+        $model->select("taskID = ?", [intval($post["updateTaskID"])]);
+        $model->estimation = intval($post['updateTask']);
+        $model->update();
+        return new \View();
     }
 }

@@ -66,7 +66,7 @@ class FormGenerator
             $this->constructRequireAttribute($requiredType),
             $inputClass);
 
-        if ($requiredType === "date") {
+        if ($inputType === "date" || $requiredType === "date") {
             $this->generatedScripts .= "<script>$(function() { $(\"#{$inputID}\").datepicker({inline:true, dateFormat: \"yy-mm-dd\"});});</script>\n";
         }
 

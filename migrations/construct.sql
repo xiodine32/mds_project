@@ -122,7 +122,7 @@ CREATE TABLE Tasks (
   taskDescription TEXT            NOT NULL,
   difficulty      INT(2)          NOT NULL,
 
-  estimation      INT,
+  estimation      INT             NOT NULL,
 
   CONSTRAINT FOREIGN KEY (projectID)
   REFERENCES Projects (projectID)

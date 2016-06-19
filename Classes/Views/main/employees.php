@@ -58,8 +58,8 @@ $fg->addSubmit("button", "Register");
     <div class="columns large-12">
         <ul class="tabs" data-tabs id="example-tabs">
             <li class="tabs-title is-active"><a href="#add" aria-selected="true">Register Employee</a></li>
-            <li class="tabs-title"><a href="#link">Link Employee Department</a></li>
-            <li class="tabs-title"><a href="#linkProject">Link Employee Project</a></li>
+            <li class="tabs-title"><a href="#link" id="tab2">Link Employee Department</a></li>
+            <li class="tabs-title"><a href="#linkProject" id="tab3">Link Employee Project</a></li>
         </ul>
     </div>
 </div>
@@ -68,7 +68,7 @@ $fg->addSubmit("button", "Register");
         <?= $fg->generate() ?>
     </div>
     <section class="tabs-panel" id="link">
-        <form action="<?= $viewbag['root'] . "main/employees" ?>" method="post">
+        <form action="<?= $viewbag['root'] . "main/employees#tab2" ?>" method="post">
             <h3 class="text-center">Link Employee Department</h3>
             <div class="row">
                 <?php
@@ -120,7 +120,7 @@ $fg->addSubmit("button", "Register");
         </form>
     </section>
     <section class="tabs-panel" id="linkProject">
-        <form action="<?= $viewbag['root'] . "main/employees" ?>" method="post">
+        <form action="<?= $viewbag['root'] . "main/employees#tab3" ?>" method="post">
             <h3 class="text-center">Link Employee Project</h3>
             <div class="row">
                 <?php
@@ -181,3 +181,12 @@ $fg->addSubmit("button", "Register");
         </form>
     </section>
 </div>
+<?php $this->includeInlineBegin() ?>
+<script>
+    $(function () {
+        if (window.location.hash.length > 1) {
+            $(window.location.hash).click();
+        }
+    });
+</script>
+<?php $this->includeJSInlineEnd() ?>
