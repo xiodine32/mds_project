@@ -54,7 +54,13 @@ function showItem($weekDate)
                 $column = "small-1";
             ?>
             <a href="calendar/view?week=<?= $weekDate ?>&day=<?= $day ?>">
-                <div class="<?= $callout ?> columns <?= $column ?>" data-equal-size><?= $days[$day - 1] ?></div>
+                <div class="<?= $callout ?> columns <?= $column ?>" data-equal-size>
+                    <?= $days[$day - 1] ?>
+                    <br>
+                    <span style="font-size:0.6em">
+                        <?= date("Y-m-d", strtotime("2016-W" . $weekDate . "-" . $day)); ?>
+                    </span>
+                </div>
             </a>
         <?php endfor ?>
         <div class="label label-bottom"><?= $weekDate ?></div>
