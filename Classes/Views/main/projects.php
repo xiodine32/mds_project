@@ -71,7 +71,27 @@ $formGenerator->addInput("select", "contactDepartmentID", "departmentID", "Depar
     <div class="row">
         <div class="large-12 columns">
             <?php foreach ($projects as $project): /** @var \Models\Generated\ModelProject $project */ ?>
-                <pre><?= $project ?></pre>
+                <dl class="presentator callout" style="min-width: 500px;">
+                    <dt>Title</dt>
+                    <dd><?= $project->title ?></dd>
+                    <dt>Start Date</dt>
+                    <dd><?= $project->startDate ?></dd>
+                    <dt>End Date</dt>
+                    <dd><?= $project->endDate ?></dd>
+                    <dt>Contract Number</dt>
+                    <dd><?= $project->contractNumber ?></dd>
+                    <dt>PJ Description</dt>
+                    <dd><?= $project->pjDescription ?></dd>
+                    <dt>Budget</dt>
+                    <dd><?= $project->budget ?></dd>
+                    <dt>Department</dt>
+                    <dd><?= $project->department->title ?></dd>
+                    <dt>Contact</dt>
+                    <dd><?= $project->contact->contactName ?> (
+                        <a href="tel:<?= $project->contact->phoneNumber ?>"><?= $project->contact->phoneNumber ?></a>
+                        )
+                    </dd>
+                </dl>
             <?php endforeach ?>
         </div>
     </div>

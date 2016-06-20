@@ -320,4 +320,35 @@ abstract class SmartModel
 
         return Database::instance()->query($stmt, $prepared, \Database::FETCH_NONE) !== false;
     }
+
+    /**
+     * Joins on all ID elements.
+     */
+    public function joinAll()
+    {
+        $keys = $this->getPublicMembers();
+        // ignore primary key.. lol!
+        array_splice($keys, 0, 1);
+        foreach ($keys as $key) {
+            if (substr($key, -2) === "ID")
+                $this->joinOn($key);
+        }
+    }
+
+    /**
+     * @param $fieldName string
+     */
+    public function joinOn($fieldName)
+    {
+        if (empty($this->child->$fieldName))
+            return;
+        $joinedField = substr($fieldName, 0, -2);
+        $class = "\\Models\\Generated\\Model" . ucfirst($joinedField);
+        $class = new $class();
+        /**
+         * @var $class SmartModel
+         */
+        $class->select($fieldName . " = ?", [$this->child->$fieldName]);
+        $this->child->$joinedField = $class;
+    }
 }

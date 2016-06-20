@@ -81,10 +81,8 @@ class ControllerTasks extends ControllerMain
          * @var $item ModelTask
          */
         foreach ($array as $item) {
-            $item->employee = new ModelEmployee();
-            $item->employee->select("employeeID = ?", [$item->employeeID]);
-            $item->project = new ModelProject();
-            $item->project->select("projectID = ?", [$item->projectID]);
+            $item->joinOn("employeeID");
+            $item->joinOn("projectID");
         }
         return $array;
     }

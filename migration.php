@@ -212,6 +212,8 @@ function classFor($database, $tableName, $modelName = null)
     $fields = [];
     $copyPasteFields = [];
     $copyPasteRequiredFields = [];
+    $properties = [];
+    $first = false;
     foreach ($table as $item) {
         $fieldName = $item['Type'];
         if ($firstP = strpos($fieldName, "(")) {
@@ -229,6 +231,14 @@ function classFor($database, $tableName, $modelName = null)
             $fieldName .= "|null";
         }
 
+        if (substr($item['Field'], -2) === "ID") {
+            if ($first) {
+                $field = substr($item['Field'], 0, -2);
+                $model = "Model" . ucfirst($field);
+                $properties[] = " * @property {$model} {$field}";
+            }
+            $first = true;
+        }
         if (!$required) {
             $copyPasteFields[] = $item['Field'];
         } else {
@@ -246,6 +256,11 @@ function classFor($database, $tableName, $modelName = null)
     $fields = join("\n", $fields);
 
     $singleName = substr($tableName, 0, -1);
+
+    if (!count($properties))
+        $properties = "";
+    if (!empty($properties))
+        $properties = "\n" . join("\n", $properties);
 
     if ($modelName == null)
         $modelName = "Model{$singleName}";
@@ -269,7 +284,7 @@ use SmartModel;
 
 
 /**
- * Model {$singleName}.
+ * Model {$singleName}.{$properties}
  * @package Models
  */
 class {$modelName} extends SmartModel

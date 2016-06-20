@@ -16,6 +16,8 @@ class ControllerProfile extends ControllerMain
      */
     protected function mainCall($request)
     {
+        $this->employee->joinAll();
+
         return new \View();
     }
 }

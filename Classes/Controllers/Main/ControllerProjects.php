@@ -43,6 +43,12 @@ RIGHT JOIN Contacts USING (contactID)");
         }
 
         $this->viewbag['projects'] = (new ModelProject())->selectAll();
+        foreach ($this->viewbag['projects'] as $project) {
+            /**
+             * @var $project ModelProject
+             */
+            $project->joinAll();
+        }
 
         return new \View();
     }
