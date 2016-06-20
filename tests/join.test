@@ -12,5 +12,6 @@
 #
 load \Models\Generated\ModelProject
 method select()
-method joinAll()
+method joinOn("contactID")
 expect true !empty($this->contact)
+expect true empty($this->department)
