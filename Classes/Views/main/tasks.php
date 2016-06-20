@@ -107,12 +107,14 @@ if (empty($viewbag['tasks']))
         <h1 class="text-center">View All Tasks</h1>
         <hr>
         <div class="row">
-            <?php foreach ($viewbag['tasks'] as $item):
+            <?php $i = 0;
+            $n = count($viewbag['tasks']);
+            foreach ($viewbag['tasks'] as $item):$i++;
                 /**
                  * @var $item \Models\Generated\ModelTask
                  */
                 ?>
-                <div class="small-6 small-centered">
+                <div class="small-6 <?= ($i % 2 == 1) && $i == $n ? "small-centered" : "columns" ?>">
                     <div class="callout">
                         <ul style="list-style-type: none;margin-left: 0;">
                             <li>
@@ -162,8 +164,10 @@ if (empty($viewbag['tasks']))
     <h1 class="text-center">Your Tasks</h1>
     <hr>
     <div class="row">
-        <?php foreach ($viewbag['user_tasks'] as $item): ?>
-            <div class="small-6 small-centered">
+        <?php $i = 0;
+        $n = count($viewbag['user_tasks']);
+        foreach ($viewbag['user_tasks'] as $item): $i++; ?>
+            <div class="small-6 <?= ($i % 2 == 1) && $i == $n ? "small-centered" : "columns" ?>">
                 <div class="callout">
                     <ul style="list-style-type: none;margin-left: 0;">
                         <li>
