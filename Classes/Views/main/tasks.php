@@ -134,11 +134,12 @@ if (empty($viewbag['tasks']))
                             </li>
 
                             <li>
-                                <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post" id="formEstimation">
+                                <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post"
+                                      class="formEstimation">
                                     <p>Estimation: <span style="float:right;"
                                                          class="label secondary"><?= $item->estimation ?></span></p>
                                     <div class="text-center">
-                                        <button class="button small" id="updatebutton"
+                                        <button class="button small updatebutton"
                                                 name="updateTaskID" value="<?= $item->taskID ?>"
                                                 type="submit">Update
                                         </button>
@@ -186,11 +187,11 @@ if (empty($viewbag['tasks']))
                                                  class="label secondary"><?= $item->difficulty ?></span></p>
                         </li>
                         <li>
-                            <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post" id="formEstimation">
+                            <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post" class="formEstimation">
                                 <p>Estimation: <span style="float:right;"
                                                      class="label secondary"><?= $item->estimation ?></span></p>
                                 <div class="text-center">
-                                    <button class="button small" id="updatebutton"
+                                    <button class="button small updatebutton"
                                             name="updateTaskID" value="<?= $item->taskID ?>"
                                             type="submit">Update
                                     </button>
@@ -212,10 +213,12 @@ if (empty($viewbag['tasks']))
 </section>
 <?php $this->includeInlineBegin() ?>
     <script>
-        $("#updatebutton").one("click", function (e) {
+        $(".updatebutton").one("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
-            var $f = $("#formEstimation");
+            var $f = $(this);
+            while (!$f.hasClass("formEstimation"))
+                $f = $f.parent();
             var $find = $f.find(".label.secondary");
             $find.remove();
             $f.find("p").after("<input type='number' value='" + $find.html() + "' min='0' name='updateTask'>");
