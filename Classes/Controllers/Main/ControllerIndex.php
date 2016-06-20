@@ -5,6 +5,8 @@
 
 namespace Controllers\Main;
 
+use Models\Generated\ModelTask;
+
 
 /**
  * Index Controller Main
@@ -20,6 +22,20 @@ class ControllerIndex extends ControllerMain
     protected function mainCall($request)
     {
         $this->viewbag['title'] = 'Main Page';
+        $this->viewbag['tasks'] = count((new ModelTask())->selectAll('employeeID = ? ', [$this->employee->employeeID]));
+
+        $prepared = [];
+        $adminClause = "";
+        if (!$this->employee->administrator) {
+            $adminClause = 'employeeID = ? AND ';
+            $prepared[] = $this->employee->employeeID;
+        }
+
+        $prepared[] = date("Y-m-d");
+        $prepared[] = date("Y-m-d");
+
+        $this->viewbag['todayTasks'] =
+            count((new ModelTask())->selectAll($adminClause . 'startDate <= ? AND ? <= endDate ', $prepared));
 
         return new \View();
     }

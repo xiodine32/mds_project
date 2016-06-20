@@ -15,9 +15,9 @@ if (!isset($viewbag)) die();
         </a>
     </div>
     <div class="small-6 columns">
-        <a href="<?= $viewbag['root'] ?>main/projects">
+        <a href="<?= $viewbag['root'] ?>main/calendar/view?week=<?= date("W") ?>&day=<?= date("N") ?>">
             <div class="callout text-center">
-                <p>Current projects: 0</p>
+                <p>Today tasks: <?= $viewbag['todayTasks'] ?></p>
             </div>
         </a>
     </div>
@@ -26,7 +26,7 @@ if (!isset($viewbag)) die();
     <div class="small-6 columns">
         <a href="<?= $viewbag['root'] ?>main/tasks">
             <div class="callout text-center">
-                <p>Your tasks: 0</p>
+                <p>Your tasks: <?= $viewbag['tasks'] ?></p>
             </div>
         </a>
     </div>
