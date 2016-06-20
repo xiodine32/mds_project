@@ -62,7 +62,7 @@ class ControllerTasks extends ControllerMain
         if ($this->employee->administrator) {
             $this->viewbag['employees'] = (new ModelEmployee())->selectAll();
             $this->viewbag['projects'] = (new ModelProject())->selectAll();
-            $this->viewbag['tasks'] = (new ModelTask())->selectAll();
+            $this->viewbag['tasks'] = (new ModelTask())->selectAll("employeeID <> ?", [$this->employee->employeeID]);
             $this->viewbag['tasks'] = $this->addEmployeeToSelect($this->viewbag['tasks']);
 
         }

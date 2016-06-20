@@ -18,6 +18,12 @@ class Tester
         return true;
     }
 
+    public function loadClassSingleton($className)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->theThis = $className::getInstance();
+    }
+
     /**
      * @param $fieldName string
      * @param $value string

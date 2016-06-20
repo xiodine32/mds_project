@@ -93,8 +93,8 @@ foreach (glob(__DIR__ . "/tests/*") as $test) {
             <?php endforeach ?>
             <div class="row">
                 <div class="small-9 columns small-offset-3">
-                    <button class="button large" id="runAll" type="submit">Run All</button>
-                    <button class="button large secondary" type="submit">Run Selected</button>
+                    <button class="button large" type="submit">Run Selected</button>
+                    <button class="button large secondary" id="runAll" type="submit">Run All</button>
                 </div>
             </div>
         </form>
@@ -133,6 +133,11 @@ function runLanguage($fileData)
             continue;
 
         if (stringBeginsWith($line, "load ")) {
+            if (stringBeginsWith($line, "singleton ")) {
+                $test->loadClassSingleton($line);
+                echo "<p>loaded class: " . highlightCode($line) . "</p>";
+                continue;
+            }
             if ($test->loadClass($line)) {
                 echo "<p>loaded class: " . highlightCode($line) . "</p>";
             }

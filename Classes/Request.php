@@ -23,10 +23,11 @@ class Request
         session_set_cookie_params($lifetime * 60, "/mds/", null, null, true);
         session_name("RAT");
 
-        session_start();
+        if (session_status() == PHP_SESSION_NONE)
+            session_start();
 
         // update last time visited cookie
-        setcookie(session_name(), session_id(), time() + $lifetime * 60, "/mds/", null, null, true);
+        @setcookie(session_name(), session_id(), time() + $lifetime * 60, "/mds/", null, null, true);
 
         // filter variables
         $this->get = filter_input_array(INPUT_GET);
@@ -46,7 +47,7 @@ class Request
      * @param $array string[]
      * @return string[]
      */
-    private function sanitize($array)
+    public function sanitize($array)
     {
         if (empty($array))
             return $array;

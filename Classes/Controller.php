@@ -67,7 +67,7 @@ abstract class Controller
      * @param mixed|null [$value] Value of get element. If null, only existance is checked.
      * @return bool True if exists and (true if value is not null and equal to requested value or true if value is null)
      */
-    protected function has($array, $key, $value = null)
+    public function has($array, $key, $value = null)
     {
         return isset($array[$key]) && (($value !== null && $array[$key] === $value) || $value === null);
     }
@@ -78,7 +78,7 @@ abstract class Controller
      * @param boolean $checkEmpty If <b>TRUE</b>, checks to exist. If <b>FALSE</b>, checks only to be set.
      * @return bool True if all keys are set.
      */
-    protected function hasMany($array, $keys, $checkEmpty = true)
+    public function hasMany($array, $keys, $checkEmpty = true)
     {
         if ($checkEmpty) {
             foreach ($keys as $key) {
@@ -100,7 +100,7 @@ abstract class Controller
      * @param string[] $keys Keys of array to check.
      * @param mixed $default Default value
      */
-    protected function assureMany(&$array, $keys, $default = null)
+    public function assureMany(&$array, $keys, $default = null)
     {
         foreach ($keys as $key) {
             $this->assure($array, $key, $default);
@@ -113,7 +113,7 @@ abstract class Controller
      * @param string $key Key of array to check.
      * @param mixed $default Default value
      */
-    protected function assure(&$array, $key, $default = null)
+    public function assure(&$array, $key, $default = null)
     {
         if (empty($array[$key]))
             $array[$key] = $default;

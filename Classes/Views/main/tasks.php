@@ -104,7 +104,7 @@ if (empty($viewbag['tasks']))
     <!--        </form>-->
     <!--    </section>-->
     <section>
-        <h1 class="text-center">View All Tasks</h1>
+        <h1 class="text-center">View Other Tasks</h1>
         <hr>
         <div class="row">
             <?php $i = 0;
