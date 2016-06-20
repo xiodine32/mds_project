@@ -34,9 +34,30 @@ class Request
         $this->cookie = filter_input_array(INPUT_COOKIE);
         $this->server = filter_input_array(INPUT_SERVER);
 
+        $this->get = $this->sanitize($this->get);
+        $this->post = $this->sanitize($this->post);
+
         // set globals
         $this->globals = $GLOBALS;
     }
+
+    /**
+     * Sanitizes array
+     * @param $array string[]
+     * @return string[]
+     */
+    private function sanitize($array)
+    {
+        if (empty($array))
+            return $array;
+
+        foreach ($array as &$item) {
+            $item = filter_var($item, FILTER_SANITIZE_SPECIAL_CHARS);
+        }
+        unset($item);
+        return $array;
+    }
+
     public static function getInstance()
     {
         static $singleton = null;

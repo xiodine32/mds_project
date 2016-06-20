@@ -36,6 +36,7 @@ $user = $viewbag['employee'];
                     <?php if ($user->administrator): ?>
                         <li><a href="<?= $viewbag['root'] ?>main/employees">Employees</a></li>
                         <li><a href="<?= $viewbag['root'] ?>main/departments">Departments</a></li>
+                        <li><a href="<?= $viewbag['root'] ?>main/models/">Database</a></li>
                     <?php endif ?>
                 </ul>
             </div>

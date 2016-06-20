@@ -29,6 +29,7 @@ class SmartModelFactory
         $elements = array_slice($model->getPublicMembers(), 1);
         foreach ($elements as $key) {
             $value = isset($request->post[$key]) ? $request->post[$key] : null;
+            
             $model->$key = $value;
         }
         return $model;

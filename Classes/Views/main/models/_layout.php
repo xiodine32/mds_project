@@ -6,7 +6,7 @@
  * @var $this \View
  */
 if (!isset($viewbag) || !isset($this)) die();
-$text = (!isset($viewbag['model']) ? "Model" : $viewbag['model']) . "s";
+$text = (!isset($viewbag['model']) ? "Table" : $viewbag['model']) . "s";
 
 ?>
 <div class="row">

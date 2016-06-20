@@ -3,7 +3,7 @@
  * Created at: 29/03/16 12:30
  */
 
-define("DEV", true);
+define("DEV", false);
 // show errors if they exist
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
