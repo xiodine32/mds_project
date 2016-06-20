@@ -109,55 +109,11 @@ if (empty($viewbag['tasks']))
         <div class="row">
             <?php $i = 0;
             $n = count($viewbag['tasks']);
-            foreach ($viewbag['tasks'] as $item):$i++;
-                /**
-                 * @var $item \Models\Generated\ModelTask
-                 */
-                ?>
-                <div class="small-6 <?= ($i % 2 == 1) && $i == $n ? "small-centered" : "columns" ?>">
-                    <div class="callout">
-                        <ul style="list-style-type: none;margin-left: 0;">
-                            <li>
-                                <span
-                                    style="float:right;"><?= $item->employee->firstName . " " . $item->employee->lastName ?></span>
-                                <p><strong><?= $item->taskDescription ?></strong></p>
-                            </li>
-                            <li>
-                                <p>
-                                    Project:
-                                    <span style="float: right;"><?= $item->project->title ?></span>
-                                </p>
-                            </li>
-                            <li>
-                                <p>Difficulty: <span style="float: right;"
-                                                     class="label secondary"><?= $item->difficulty ?></span></p>
-                            </li>
-
-                            <li>
-                                <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post"
-                                      class="formEstimation">
-                                    <p>Estimation: <span style="float:right;"
-                                                         class="label secondary"><?= $item->estimation ?></span></p>
-                                    <div class="text-center">
-                                        <button class="button small updatebutton"
-                                                name="updateTaskID" value="<?= $item->taskID ?>"
-                                                type="submit">Update
-                                        </button>
-                                    </div>
-                                </form>
-                                <div class="clearfix"></div>
-                            </li>
-                            <li>
-                                Start:
-                                <span class="label secondary"><?= $item->startDate ?></span>
-                                <div style="float: right;">End: <span class="label alert"><?= $item->endDate ?></span>
-                                </div>
-                                <div class="clearfix"></div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            <?php endforeach ?>
+            foreach ($viewbag['tasks'] as $item) {
+                $i++;
+                require __DIR__ . "/_task.php";
+            }
+            ?>
         </div>
     </section>
 <?php endif ?>
@@ -168,46 +124,7 @@ if (empty($viewbag['tasks']))
         <?php $i = 0;
         $n = count($viewbag['user_tasks']);
         foreach ($viewbag['user_tasks'] as $item): $i++; ?>
-            <div class="small-6 <?= ($i % 2 == 1) && $i == $n ? "small-centered" : "columns" ?>">
-                <div class="callout">
-                    <ul style="list-style-type: none;margin-left: 0;">
-                        <li>
-                            <span
-                                style="float:right;"><?= $item->employee->firstName . " " . $item->employee->lastName ?></span>
-                            <p><strong><?= $item->taskDescription ?></strong></p>
-                        </li>
-                        <li>
-                            <p>
-                                Project:
-                                <span style="float: right;"><?= $item->project->title ?></span>
-                            </p>
-                        </li>
-                        <li>
-                            <p>Difficulty: <span style="float: right;"
-                                                 class="label secondary"><?= $item->difficulty ?></span></p>
-                        </li>
-                        <li>
-                            <form action="<?= $viewbag['root'] . "main/tasks" ?>" method="post" class="formEstimation">
-                                <p>Estimation: <span style="float:right;"
-                                                     class="label secondary"><?= $item->estimation ?></span></p>
-                                <div class="text-center">
-                                    <button class="button small updatebutton"
-                                            name="updateTaskID" value="<?= $item->taskID ?>"
-                                            type="submit">Update
-                                    </button>
-                                </div>
-                            </form>
-                            <div class="clearfix"></div>
-                        </li>
-                        <li>
-                            Start:
-                            <span class="label secondary"><?= $item->startDate ?></span>
-                            <div style="float: right;">End: <span class="label alert"><?= $item->endDate ?></span></div>
-                            <div class="clearfix"></div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <?php require __DIR__ . "/_task.php" ?>
         <?php endforeach ?>
     </div>
 </section>

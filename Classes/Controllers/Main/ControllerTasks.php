@@ -24,7 +24,7 @@ class ControllerTasks extends ControllerMain
         if ($this->hasMany($request->post, ["taskDescription", "difficulty", "estimation"])) {
             $view = $this->tryInsertNewTask($request->post);
         }
-        if ($this->hasMany($request->post, ["updateTaskID", "updateTask"])) {
+        if ($this->hasMany($request->post, ["updateTaskID", "updateTask"], false)) {
             $view = $this->tryUpdateTask($request->post);
         }
         $this->addTasksToViewbag();
@@ -93,8 +93,10 @@ class ControllerTasks extends ControllerMain
     {
         //TODO: add validation so that an admin can modify other people's tasks, but a normal user can't
         $model = new ModelTask();
-        $model->select("taskID = ?", [intval($post["updateTaskID"])]);
-        $model->estimation = intval($post['updateTask']);
+        $updateTaskID = intval($post["updateTaskID"]);
+        $updateTask = intval($post['updateTask']);
+        $model->select("taskID = ?", [$updateTaskID]);
+        $model->estimation = $updateTask;
         $model->update();
         return new \View();
     }

@@ -26,6 +26,16 @@ CREATE TABLE Roles (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE Contacts (
+  contactID       INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  contactName     VARCHAR(50)     NOT NULL,
+  phoneNumber     VARCHAR(13),
+  faxNumber       VARCHAR(13),
+  email           VARCHAR(50),
+  physicalAddress VARCHAR(75)
+)
+  ENGINE = InnoDB;
+
 CREATE TABLE Projects (
   projectID      INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   title          VARCHAR(50)     NOT NULL,
@@ -96,15 +106,6 @@ CREATE TABLE Educations (
   REFERENCES Employees (employeeID)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-)
-  ENGINE = InnoDB;
-CREATE TABLE Contacts (
-  contactID       INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  contactName     VARCHAR(50)     NOT NULL,
-  phoneNumber     VARCHAR(13),
-  faxNumber       VARCHAR(13),
-  email           VARCHAR(50),
-  physicalAddress VARCHAR(75)
 )
   ENGINE = InnoDB;
 

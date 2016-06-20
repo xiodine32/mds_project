@@ -98,3 +98,16 @@ code {
 .row > .small-centered {
     clear: both;
 }
+
+.smart.callout {
+    margin: 5px;
+    -webkit-transition: transform 133ms;
+    -moz-transition: transform 133ms;
+    -ms-transition: transform 133ms;
+    -o-transition: transform 133ms;
+    transition: transform 133ms;
+}
+
+.smart.callout:hover {
+    transform: scale(0.8, 0.8);
+}

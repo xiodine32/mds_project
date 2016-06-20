@@ -18,7 +18,7 @@ $user = $viewbag['employee'];
             <?php showItem($i); ?>
         <?php endfor ?>
     </div>
-    <div class="text-center" style="margin-bottom: 1rem;">
+    <div class="text-center" style="clear:both;margin-bottom: 1rem;">
         <a href="#" onclick="return false;" data-toggle="hidden-div">Toggle hidden</a>
     </div>
 <?php for ($i = date("W"); $i <= 52; $i++): ?>
@@ -30,26 +30,33 @@ $user = $viewbag['employee'];
 function showItem($weekDate)
 {
     $today = date("W");
-    $callout = 'callout';
+    $callout = 'smart callout';
     if ($weekDate == $today)
         $callout .= ' success';
     elseif ($weekDate > $today)
         $callout .= ' secondary';
     else
         $callout .= ' warning';
+    $days = [
+        date("l", mktime(0, 0, 0, 1, 1, 1990)),
+        date("l", mktime(0, 0, 0, 1, 2, 1990)),
+        date("l", mktime(0, 0, 0, 1, 3, 1990)),
+        date("l", mktime(0, 0, 0, 1, 4, 1990)),
+        date("l", mktime(0, 0, 0, 1, 5, 1990)),
+        "<small>" . date("l", mktime(0, 0, 0, 1, 6, 1990)) . "</small>",
+        "<small>" . date("l", mktime(0, 0, 0, 1, 7, 1990)) . "</small>",
+    ];
     ?>
-    <div class="<?= $callout ?> row" style="position: relative;">
-        <div class="columns small-2" data-equal-size>Luni</div>
-        <div class="columns small-2" data-equal-size>Marti</div>
-        <div class="columns small-2" data-equal-size>Miercuri</div>
-        <div class="columns small-2" data-equal-size>Joi</div>
-        <div class="columns small-2" data-equal-size>Vineri</div>
-        <div class="columns small-1" data-equal-size>
-            <small>Sambata</small>
-        </div>
-        <div class="columns small-1" data-equal-size>
-            <small>Duminica</small>
-        </div>
+    <div class="row text-center" style="position: relative;">
+        <?php for ($day = 1; $day <= 7; $day++):
+            $column = "small-2";
+            if (strpos($days[$day - 1], "<small>") !== false)
+                $column = "small-1";
+            ?>
+            <a href="calendar/view?week=<?= $weekDate ?>&day=<?= $day ?>">
+                <div class="<?= $callout ?> columns <?= $column ?>" data-equal-size><?= $days[$day - 1] ?></div>
+            </a>
+        <?php endfor ?>
         <div class="label label-bottom"><?= $weekDate ?></div>
     </div>
     <?php
