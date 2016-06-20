@@ -46,6 +46,8 @@ function showItem($weekDate, $viewbag)
         "<small>" . date("l", mktime(0, 0, 0, 1, 6, 1990)) . "</small>",
         "<small>" . date("l", mktime(0, 0, 0, 1, 7, 1990)) . "</small>",
     ];
+    if ($weekDate < 10)
+        $weekDate = "0" . $weekDate;
     ?>
     <div class="row text-center" style="position: relative;">
         <?php for ($day = 1; $day <= 7; $day++):
